@@ -1,7 +1,9 @@
 Point Cloud plugin for CSIRO Workspace
 ======================================
 
-This project is a plugin for the [CSIRO Workspace](https://research.csiro.au/workspace/) scientific workflow framework. Its purpose is to expose existing open source libraries including [PCL](https://research.csiro.au/workspace/), [libLAS](http://www.liblas.org/), [LASzip](http://www.laszip.org/) and [SSD Surface Reconstruction](http://mesh.brown.edu/ssd/software.html) for use in Workspace to support point cloud processing and visualisation workflows. 
+This project is a plugin for the [CSIRO Workspace](https://research.csiro.au/workspace/) scientific workflow framework. Its purpose is to expose existing open source libraries including [PCL](http://pointclouds.org/), [libLAS](http://www.liblas.org/), [LASzip](http://www.laszip.org/) and [SSD Surface Reconstruction](http://mesh.brown.edu/ssd/software.html) for use in Workspace to support point cloud processing and visualisation workflows. 
+
+This plugin is very early in development and only exposes a small percentage of data structures and algorithms from the listed libraries. Feedback and contributions are more than welcome to help expand its capabilities. 
 
 Contributors
 ------------
@@ -10,6 +12,25 @@ Computational Software and Visualisation, CSIRO Digital Productivity, Clayton VI
 - Stuart Mead -
 Risk Frontiers, Dept. of Environmental Sciences, Macquarie University, North Ryde NSW
 CSIRO Digital Productivity, Clayton VIC
+
+Compiling and using the plugin
+------------------------------
+1) Download and install [CSIRO Workspace](https://research.csiro.au/workspace/download/)
+2) Download and install [PCL](http://pointclouds.org/) (or build a version yourself)
+3) Checkout this repository
+4) For LAS/LAZ support checkout [libLAS](http://www.liblas.org/) and [LASzip](http://www.laszip.org/) in sibling directories to this project's source
+5) Launch CMake from Workspace's Development menu to configure and generate the project. This needs to be done from within Workspace rather than running CMake directly as some key environment variables get setup.
+6) Compile the project
+7) Copy Install\installAreas\installArea-PointClouds.txt from your build directory to <Workspace's Directory>\installAreas
+8) Restart Workspace and a PointCloud group should be available in the Workspace operation catalogue
+
+About CSIRO Workspace
+---------------------
+Workspace is a powerful scientific application framework and workflow editor which has been in development for over 7 years. Originally designed to construct workflows for scientists in the computational fluid dynamics space, Workspace recognises the importance of interactivity, visualisation, scalability, and ease-of-use in a scientific workflow. It ships with out of the box support for things like mesh processing, interactive 3D visualisation, plotting, networking and database access and is designed to be easily extended through plugins. More than just a workflow editor, Workspace offers a natural path from early code development as part of a research workflow right through to the development of standalone applications for deployment to a collaborator or external client.
+
+Workspace is developed by the Computational Modelling and Simulation Group of Australia’s Commonwealth Scientific and Industrial Research Organisation (CSIRO). Workspace has been developed with support from CSIRO eResearch, Computational and Simulation Sciences and the Digital Productivity Flagship.
+
+For more details or to contact the team see our [research page](https://research.csiro.au/workspace/)
 
 License
 -------
@@ -46,12 +67,8 @@ IN THIS CLAUSE, CSIRO INCLUDES ANY THIRD PARTY AUTHOR OR OWNER OF ANY PART OF TH
 As a condition of this license, you agree that where you make any adaptations, modifications, further developments, or additional features available to CSIRO or the public in connection with your access to the Software, you do so on the terms of the BSD 3-Clause License template, a copy available at: http://opensource.org/licenses/BSD-3-Clause.
 
 Third Party Components
--------------------------------------------------------------------------------
-The following third party components are distributed with the Software.  
-You agree to comply with the license terms for these components as part of 
-accessing the Software.  Other third party software may also be identified in 
-separate files distributed with the Software.
--------------------------------------------------------------------------------
+----------------------
+The following third party components are distributed with the Software. You agree to comply with the license terms for these components as part of accessing the Software. Other third party software may also be identified in separate files distributed with the Software.
 
 SMOOTH SIGNED DISTANCE SURFACE RECONSTRUCTION SOFTWARE (VERSION 3.0)
 Copyright (c) 2011, Fatih Calakli and Gabriel Taubin
