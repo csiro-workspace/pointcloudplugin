@@ -21,7 +21,7 @@ Compiling and using the plugin
 4. For LAS/LAZ support checkout [libLAS](http://www.liblas.org/) and [LASzip](http://www.laszip.org/) in sibling directories to this project's source
 5. Launch CMake from Workspace's Development menu to configure and generate the project. This needs to be done from within Workspace rather than running CMake directly as some key environment variables get setup.
 6. Compile the project
-7. Copy Install\installAreas\installArea-PointClouds.txt from your build directory to <Workspace's Directory>\installAreas
+7. Copy Install\installAreas\installArea-PointClouds.txt from your build directory to Workspace's installAreas directory
 8. Restart Workspace and a PointCloud group should be available in the Workspace operation catalogue
 
 About CSIRO Workspace
@@ -30,7 +30,7 @@ Workspace is a powerful scientific application framework and workflow editor whi
 
 Workspace is developed by the Computational Modelling and Simulation Group of Australia’s Commonwealth Scientific and Industrial Research Organisation (CSIRO). Workspace has been developed with support from CSIRO eResearch, Computational and Simulation Sciences and the Digital Productivity Flagship.
 
-For more details or to contact the team see the [Workspace research page](https://research.csiro.au/workspace/)
+For more details or to contact the team see the [Workspace research page](https://research.csiro.au/workspace/).
 
 License
 -------
