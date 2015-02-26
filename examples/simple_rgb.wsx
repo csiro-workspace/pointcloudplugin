@@ -1,0 +1,364 @@
+<!DOCTYPE serializeddata>
+<operation type="Workspace" plugin="www.csiro.au/workspace/builtin" label="Root" bgcolor="4280839393" id="{970fd988-c345-4554-a534-e07f16476d03}" atomic="false">
+ <environment>
+  <platform>windows 64bit</platform>
+  <lastModified>2015-02-20T14:44:36</lastModified>
+  <plugin name="www.csiro.au/workspace/pointcloud" uri="www.csiro.au/workspace/pointcloud/3.3.1/Windows/x86_64"/>
+  <plugin name="www.csiro.au/workspace/builtin" uri="www.csiro.au/workspace/packages/3.3.1/Windows/x86_64"/>
+  <plugin name="www.csiro.au/workspace/rendering" uri="www.csiro.au/workspace/packages/3.3.1/Windows/x86_64"/>
+  <plugin name="www.csiro.au/workspace/mesh" uri="www.csiro.au/workspace/packages/3.3.1/Windows/x86_64"/>
+ </environment>
+ <input name="Dependencies" size="0"/>
+ <displays>
+  <widgetwindow docklocation="2" floating="false">
+   <iobase wsDataPath="wsDataPath:{d3113288-55f2-44cf-ace7-6e666b324ede}:output:Scene"/>
+   <displaywidget displayWidgetName="CSIRO::Rendering::WSGLWidget"/>
+   <geometry>AdnQywABAAAAAAAAAAAAFgAAAtMAAAIrAAAAAAAAABYAAALTAAACKwAAAAAAAA==</geometry>
+   <properties>
+    <property name="backgroundColor" value="#4d4d7f"/>
+    <property name="showHud" value="true"/>
+    <property name="showSymbols" value="true"/>
+    <property name="depthPeeling" value="false"/>
+    <property name="numDepthLayers" value="4"/>
+    <property name="antialiasing" value="true"/>
+    <property name="numSamples" value="4"/>
+    <property name="camera" value="Default-Camera"/>
+    <property name="cameraSwitchable" value="true"/>
+    <property name="suppressCameraWarnings" value="true"/>
+    <property name="showSelectionButtons" value="true"/>
+    <property name="modelSelection" value="false"/>
+    <property name="pointSize" value="2"/>
+    <property name="lineWidth" value="1"/>
+    <property name="ssaoEnabled" value="false"/>
+    <property name="ssaoNumSamples" value="64"/>
+    <property name="ssaoSampleLength" value="0.025"/>
+    <property name="ssaoStrength" value="1.5"/>
+    <property name="ssaoAttenuation" value="0.001"/>
+   </properties>
+  </widgetwindow>
+ </displays>
+ <operation type="LasReader" plugin="www.csiro.au/workspace/pointcloud" label="Read LAS/LAZ file" bgcolor="4284395451" id="{f65df40e-71cd-4f75-886e-4ec6c31f586a}">
+  <input name="Dependencies" size="0"/>
+  <input preferredwidget="CSIRO::Widgets::FileNameWidget" name="File name">http://www.liblas.org/samples/LAS12_Sample_withRGB_Quick_Terrain_Modeler.laz</input>
+  <view width="164" height="87" x="-342" y="4"/>
+ </operation>
+ <operation type="Workspace" plugin="www.csiro.au/workspace/builtin" label="Visualize Model" catpath="Scene" globalname="userWorkspace" bgcolor="4280839393" catname="Visualize Model" id="{d3113288-55f2-44cf-ace7-6e666b324ede}">
+  <input name="Dependencies" size="0"/>
+  <input name="Counter value">0</input>
+  <input name="Grids enabled">0</input>
+  <input name="Axes enabled">0</input>
+  <input name="Grid size (fraction of model size)">5</input>
+  <input name="Grid subdivisions">10</input>
+  <output preferredwidget="CSIRO::Rendering::WSGLWidget" name="Scene"/>
+  <remote guid="{8ed088b5-0923-4b25-aada-1b7956d6d63c}"/>
+  <view width="164" height="154" x="-62" y="-29.5"/>
+  <operation type="SceneBuilder" plugin="www.csiro.au/workspace/rendering" label="Scene Root" globalname="sceneBuilder" bgcolor="4284395451" id="{2f857232-7415-4f13-9021-293134da22b9}" progresscontribution="100">
+   <input name="Dependencies" size="0"/>
+   <input name="Scene items" size="5"/>
+   <input name="Image overlays" size="0"/>
+   <input name="Characteristic length">1</input>
+   <output preferredwidget="CSIRO::Widgets::NullWidget" globalname="sceneOutput" name="Scene"/>
+   <view width="164" outrackloc="right" inrackloc="left" height="245" version="2" x="-12" y="-35"/>
+  </operation>
+  <operation type="CameraBuilder" plugin="www.csiro.au/workspace/rendering" label="Default-Camera" bgcolor="4284395451" id="{35ae3323-e17d-4a41-b61b-e37cf3f34883}">
+   <input name="Dependencies" size="0"/>
+   <input name="Enabled">1</input>
+   <input name="Name">Default-Camera</input>
+   <input name="Respond to interaction">0</input>
+   <input name="Transform matrix"> 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0 0 0 1
+</input>
+   <input name="Field of view">7.5833333333333348</input>
+   <input name="Orthographic view volume">1</input>
+   <input name="Near clipping plane">215.85286780235029</input>
+   <input name="Far clipping plane">4317.0573560470057</input>
+   <input name="Projection mode">0</input>
+   <view width="164" outrackloc="right" inrackloc="left" height="220" version="2" x="-272" y="-152.5"/>
+  </operation>
+  <operation type="WorkspaceOutput" plugin="www.csiro.au/workspace/builtin" label="Output: Scene" dataplugin="www.csiro.au/workspace/rendering" bgcolor="4280722984" datatype="CSIRO::Rendering::Scene" id="{d4c331ee-6e6d-4172-ba10-3af5832d381a}" dataname="Scene">
+   <input name="Dependencies" size="0"/>
+   <view width="164" outrackloc="right" inrackloc="left" height="170" version="2" x="118" y="2.5"/>
+  </operation>
+  <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="playbackLoop" dataplugin="www.csiro.au/workspace/builtin" globalname="playbackLoop" bgcolor="4288085880" datatype="int" id="{a43d60f7-e53e-44a0-a8f7-1e325d11fb50}" dataname="Counter value">
+   <input name="Dependencies" size="0"/>
+   <view width="164" outrackloc="right" inrackloc="left" height="170" version="2" x="-272" y="2.5"/>
+  </operation>
+  <operation type="TransformBuilder" plugin="www.csiro.au/workspace/rendering" label="Transform builder" bgcolor="4284395451" id="{2f418889-8eab-4c2c-b603-6927e82256a4}">
+   <input name="Dependencies" size="0"/>
+   <input name="Enabled">1</input>
+   <input name="Interactive">0</input>
+   <input name="Name">Transform</input>
+   <input name="Transform matrix"> 0.971266327027441 -0.0350593485125682 0.235398734203245 729138.583667856
+ 0.22367023924377 0.472436561638147 -0.852511184269252 4674886.58016037
+ -0.0813224818808002 0.88066709789193 0.466703456845294 1317.25577206397
+ 0 0 0 1
+</input>
+   <input name="Child scene items" size="3"/>
+   <view width="164" outrackloc="right" inrackloc="left" height="190" version="2" x="-132" y="-137.5"/>
+  </operation>
+  <operation type="DirectionalLightBuilder" plugin="www.csiro.au/workspace/rendering" label="Directional Light" bgcolor="4284395451" id="{4f909627-b551-44d1-8343-7040175ca843}">
+   <input name="Dependencies" size="0"/>
+   <input name="Enabled">1</input>
+   <input name="Intensity">1</input>
+   <input rgba="4291019715" name="Color"/>
+   <view width="164" outrackloc="right" inrackloc="left" height="170" version="2" x="-382" y="-127.5"/>
+  </operation>
+  <operation type="MeshModelInstanceBuilder" plugin="www.csiro.au/workspace/rendering" label="Mesh instance" bgcolor="4284395451" id="{59b41f76-014f-44a0-b521-305fa61fe6de}">
+   <input name="Dependencies" size="0"/>
+   <input name="Model ID">defaultModelId</input>
+   <input name="Enabled">1</input>
+   <input name="Interactive">1</input>
+   <input name="Clear cached data" size="1"/>
+   <input name="Edge break threshold">30</input>
+   <input name="Glyphers" size="0"/>
+   <input name="Transform matrix"> 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0 0 0 1
+</input>
+   <view width="164" height="237" x="-152" y="89"/>
+  </operation>
+  <operation source=":/sceneInteraction/dynamicmeshmodel.xml" type="Workspace" plugin="www.csiro.au/workspace/builtin" label="Workflow-generated Mesh" bgcolor="4280839393" id="{7823b96c-07f4-4622-98dd-ea1aae8c878f}" atomic="false">
+   <input name="Dependencies" size="0"/>
+   <view width="164" height="87" x="-292" y="164"/>
+  </operation>
+  <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Mesh 1" dataplugin="www.csiro.au/workspace/mesh" bgcolor="4278242304" datatype="CSIRO::Mesh::MeshModelInterface" id="{4c6046e9-5256-4014-af84-18c56c6362d6}" dataname="Mesh 1">
+   <input name="Dependencies" size="0"/>
+   <view width="164" height="87" x="-452" y="164"/>
+  </operation>
+  <operation type="AmbientLightBuilder" plugin="www.csiro.au/workspace/rendering" label="Ambient light builder" bgcolor="5614335" id="{3fc47fc4-7d8d-46b4-a7cf-360164467719}">
+   <input name="Dependencies" size="0"/>
+   <input name="Enabled">1</input>
+   <input name="Intensity">1</input>
+   <input rgba="4282137660" name="Color"/>
+   <view width="164" outrackloc="right" inrackloc="left" height="157" version="2" x="-272" y="-241"/>
+  </operation>
+  <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Grids enabled" dataplugin="www.csiro.au/workspace/builtin" bgcolor="4278242304" datatype="bool" id="{745b276c-9b1b-4d70-8a10-4d1c777c1214}" dataname="Grids enabled">
+   <input name="Dependencies" size="0"/>
+   <view width="164" height="87" x="-522" y="450"/>
+  </operation>
+  <operation type="Workspace" plugin="www.csiro.au/workspace/builtin" label="Create grids" bgcolor="4280839393" id="{d106bd77-5e76-40e3-8c17-0896ac4149bc}" atomic="false">
+   <input name="Dependencies" size="0"/>
+   <view width="164" height="110" x="-152" y="542.5"/>
+   <operation type="GridScaleBuilder" plugin="www.csiro.au/workspace/rendering" label="GridScaleBuilder" bgcolor="4284395451" id="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}">
+    <input name="Dependencies" size="0"/>
+    <input name="Plane">1</input>
+    <input rgba="4278212095" name="Interval color"/>
+    <input rgba="4286414205" name="Sub-interval color"/>
+    <view width="164" height="330" x="338" y="372.5"/>
+   </operation>
+   <operation type="BoundingBoxOfModel" plugin="www.csiro.au/workspace/mesh" label="Model bounding box" bgcolor="4284395451" id="{7823b96c-07f4-4622-98dd-ea1aae8c878f}">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="-492" y="370"/>
+   </operation>
+   <operation type="DecomposeGroup" plugin="www.csiro.au/workspace/builtin" label="Decompose group" dataplugin="www.csiro.au/workspace/mesh" bgcolor="4284395451" datatype="CSIRO::Mesh::BoundingBox" id="{4c6046e9-5256-4014-af84-18c56c6362d6}" dataname="Object group">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="-342" y="370"/>
+   </operation>
+   <operation namedoutputs="min1:max1:interval1:subInterval1:min2:max2:interval2:subInterval2" type="RunQtScript" plugin="www.csiro.au/workspace/builtin" label="Calculate grid params" bgcolor="4284395451" id="{bbff14ca-da4e-4749-a032-6651a5948469}" namedinputs="bbMin:bbMax:subDivisions">
+    <input name="Dependencies" size="0"/>
+    <input name="Script">min1 = bbMin.x;
+max1 = bbMax.x;
+interval1 = (bbMax.x - bbMin.x) / subDivisions;
+subInterval1 = interval1 * 0.25;
+
+min2 = bbMin.y;
+max2 = bbMax.y;
+interval2 = (bbMax.y - bbMin.y) / subDivisions;
+subInterval2 = interval2 * 0.25;
+</input>
+    <input name="Parameters" size="0"/>
+    <view width="164" height="198" x="158" y="308.5"/>
+   </operation>
+   <operation namedoutputs="min1:max1:interval1:subInterval1:min2:max2:interval2:subInterval2" type="RunQtScript" plugin="www.csiro.au/workspace/builtin" label="Calculate grid params (1)" bgcolor="4284395451" id="{975c71e5-5d33-4009-8504-944c8dfcbe32}" namedinputs="bbMin:bbMax:subDivisions">
+    <input name="Dependencies" size="0"/>
+    <input name="Script">min1 = bbMin.x;
+max1 = bbMax.x;
+interval1 = (bbMax.x - bbMin.x) * 0.25;
+subInterval1 = interval1 * 0.25;
+
+min2 = bbMin.z;
+max2 = bbMax.z;
+interval2 = (bbMax.z - bbMin.z) * 0.25;
+subInterval2 = interval2 * 0.25;
+</input>
+    <input name="Parameters" size="0"/>
+    <view width="164" height="198" x="158" y="438.5"/>
+   </operation>
+   <operation type="GridScaleBuilder" plugin="www.csiro.au/workspace/rendering" label="GridScaleBuilder (1)" bgcolor="4284395451" id="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}">
+    <input name="Dependencies" size="0"/>
+    <input name="Plane">0</input>
+    <input rgba="4289671705" name="Interval color"/>
+    <input rgba="4286414205" name="Sub-interval color"/>
+    <view width="164" height="330" x="338" y="242.5"/>
+   </operation>
+   <operation type="WorkspaceOutput" plugin="www.csiro.au/workspace/builtin" label="Grid Scale" dataplugin="www.csiro.au/workspace/rendering" bgcolor="4294931456" datatype="CSIRO::Rendering::Transform" id="{2f857232-7415-4f13-9021-293134da22b9}" dataname="Grid Scale">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="130" x="498" y="472.5"/>
+   </operation>
+   <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Mesh model" dataplugin="www.csiro.au/workspace/mesh" bgcolor="4278242304" datatype="CSIRO::Mesh::MeshModelInterface" id="{a43d60f7-e53e-44a0-a8f7-1e325d11fb50}" dataname="Mesh model">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="130" x="-652" y="342.5"/>
+   </operation>
+   <operation type="WorkspaceOutput" plugin="www.csiro.au/workspace/builtin" label="Grid Scale" dataplugin="www.csiro.au/workspace/rendering" bgcolor="4294931456" datatype="CSIRO::Rendering::Transform" id="{0178d190-8568-431d-8530-42941090123a}" dataname="Output">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="130" x="498" y="342.5"/>
+   </operation>
+   <operation type="TransformVector" plugin="www.csiro.au/workspace/mesh" label="Transform Min" bgcolor="4284395451" id="{2f418889-8eab-4c2c-b603-6927e82256a4}">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="-172" y="370"/>
+   </operation>
+   <operation type="TransformMatrixBuilder" plugin="www.csiro.au/workspace/mesh" label="TransformMatrix builder" bgcolor="4284395451" id="{d4c331ee-6e6d-4172-ba10-3af5832d381a}">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="-342" y="500"/>
+   </operation>
+   <operation type="TransformVector" plugin="www.csiro.au/workspace/mesh" label="Transform Max" bgcolor="4284395451" id="{2f51a4d9-3b7d-4519-b276-98926ea0fb58}">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="-172" y="500"/>
+   </operation>
+   <operation type="Variable" plugin="www.csiro.au/workspace/builtin" label="Vector3d &amp;gt; Vector3dGroup" dataplugin="www.csiro.au/workspace/mesh" bgcolor="4284395451" datatype="CSIRO::Mesh::Vector3dGroup" id="{59b41f76-014f-44a0-b521-305fa61fe6de}" dataname="Unnamed">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="-12" y="370"/>
+   </operation>
+   <operation type="Variable" plugin="www.csiro.au/workspace/builtin" label="Vector3d &amp;gt; Vector3dGroup" dataplugin="www.csiro.au/workspace/mesh" bgcolor="4284395451" datatype="CSIRO::Mesh::Vector3dGroup" id="{06fb4a95-fba2-4077-bedb-30c8f087f089}" dataname="Unnamed">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="-12" y="500"/>
+   </operation>
+   <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Enabled" dataplugin="www.csiro.au/workspace/builtin" bgcolor="4278242304" datatype="bool" id="{35ae3323-e17d-4a41-b61b-e37cf3f34883}" dataname="Enabled">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="338" y="680"/>
+   </operation>
+   <operation type="ModifyGroup" plugin="www.csiro.au/workspace/builtin" label="Modify group" dataplugin="www.csiro.au/workspace/mesh" bgcolor="4284395451" datatype="CSIRO::Mesh::TransformGroup" id="{4f909627-b551-44d1-8343-7040175ca843}" namedinputs="Scale -> x:Scale -> y:Scale -> z" dataname="Object group">
+    <input name="Dependencies" size="0"/>
+    <input name="Object group">
+     <Shear>
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+     </Shear>
+     <Scale>
+      <x>5</x>
+      <y>5</y>
+      <z>5</z>
+     </Scale>
+     <Euler_angles>
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+     </Euler_angles>
+     <Translation>
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+     </Translation>
+    </input>
+    <input name="Populate inputs from object group">0</input>
+    <view width="164" height="132" x="-492" y="471.5"/>
+   </operation>
+   <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Grid size (fraction of model size)" dataplugin="www.csiro.au/workspace/builtin" bgcolor="4278242304" datatype="double" id="{50d15d7a-a5df-4d51-b4d3-f8bae9e3e1e9}" dataname="Grid size (fraction of model size)">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="-492" y="670"/>
+   </operation>
+   <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Grid subdivisions" dataplugin="www.csiro.au/workspace/builtin" bgcolor="4278242304" datatype="double" id="{665301c4-fdb5-49ef-b39a-d92956b0efcd}" dataname="Grid subdivisions">
+    <input name="Dependencies" size="0"/>
+    <view width="164" height="75" x="158" y="680"/>
+   </operation>
+   <connection to_op="{2f857232-7415-4f13-9021-293134da22b9}" copy="false" from_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" dest_name="Grid Scale" src_name="Grid Scale"/>
+   <connection to_op="{0178d190-8568-431d-8530-42941090123a}" copy="false" from_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" dest_name="Output" src_name="Grid Scale"/>
+   <connection to_op="{7823b96c-07f4-4622-98dd-ea1aae8c878f}" copy="false" from_op="{a43d60f7-e53e-44a0-a8f7-1e325d11fb50}" dest_name="Mesh model" src_name="Mesh model"/>
+   <connection to_op="{4c6046e9-5256-4014-af84-18c56c6362d6}" copy="false" from_op="{7823b96c-07f4-4622-98dd-ea1aae8c878f}" dest_name="Object group" src_name="Bounding box"/>
+   <connection to_op="{2f418889-8eab-4c2c-b603-6927e82256a4}" copy="false" from_op="{4c6046e9-5256-4014-af84-18c56c6362d6}" dest_name="Vector" src_name="Minimum"/>
+   <connection to_op="{2f51a4d9-3b7d-4519-b276-98926ea0fb58}" copy="false" from_op="{4c6046e9-5256-4014-af84-18c56c6362d6}" dest_name="Vector" src_name="Maximum"/>
+   <connection to_op="{2f418889-8eab-4c2c-b603-6927e82256a4}" copy="false" from_op="{d4c331ee-6e6d-4172-ba10-3af5832d381a}" dest_name="Transform" src_name="Transform matrix"/>
+   <connection to_op="{2f51a4d9-3b7d-4519-b276-98926ea0fb58}" copy="false" from_op="{d4c331ee-6e6d-4172-ba10-3af5832d381a}" dest_name="Transform" src_name="Transform matrix"/>
+   <connection to_op="{59b41f76-014f-44a0-b521-305fa61fe6de}" copy="false" from_op="{2f418889-8eab-4c2c-b603-6927e82256a4}" dest_name="Unnamed" src_name="Transformed vector"/>
+   <connection to_op="{06fb4a95-fba2-4077-bedb-30c8f087f089}" copy="false" from_op="{2f51a4d9-3b7d-4519-b276-98926ea0fb58}" dest_name="Unnamed" src_name="Transformed vector"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{35ae3323-e17d-4a41-b61b-e37cf3f34883}" dest_name="Enabled" src_name="Enabled"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{35ae3323-e17d-4a41-b61b-e37cf3f34883}" dest_name="Enabled" src_name="Enabled"/>
+   <connection to_op="{d4c331ee-6e6d-4172-ba10-3af5832d381a}" copy="false" from_op="{4f909627-b551-44d1-8343-7040175ca843}" dest_name="Transform group" src_name="Object group"/>
+   <connection to_op="{4f909627-b551-44d1-8343-7040175ca843}" copy="false" from_op="{50d15d7a-a5df-4d51-b4d3-f8bae9e3e1e9}" dest_name="Scale -> x" src_name="Grid size (fraction of model size)"/>
+   <connection to_op="{4f909627-b551-44d1-8343-7040175ca843}" copy="false" from_op="{50d15d7a-a5df-4d51-b4d3-f8bae9e3e1e9}" dest_name="Scale -> y" src_name="Grid size (fraction of model size)"/>
+   <connection to_op="{4f909627-b551-44d1-8343-7040175ca843}" copy="false" from_op="{50d15d7a-a5df-4d51-b4d3-f8bae9e3e1e9}" dest_name="Scale -> z" src_name="Grid size (fraction of model size)"/>
+   <connection to_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" copy="false" from_op="{59b41f76-014f-44a0-b521-305fa61fe6de}" dest_name="bbMin" src_name="Unnamed"/>
+   <connection to_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" copy="false" from_op="{06fb4a95-fba2-4077-bedb-30c8f087f089}" dest_name="bbMax" src_name="Unnamed"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" dest_name="Axis1 min" src_name="min1"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" dest_name="Axis1 max" src_name="max1"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" dest_name="Axis1 interval" src_name="interval1"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" dest_name="Axis1 sub-interval" src_name="subInterval1"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" dest_name="Axis2 min" src_name="min2"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" dest_name="Axis2 max" src_name="max2"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" dest_name="Axis2 interval" src_name="interval2"/>
+   <connection to_op="{b6faaccd-e32e-4bf1-a18d-e8a825f47bf6}" copy="false" from_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" dest_name="Axis2 sub-interval" src_name="subInterval2"/>
+   <connection to_op="{bbff14ca-da4e-4749-a032-6651a5948469}" copy="false" from_op="{59b41f76-014f-44a0-b521-305fa61fe6de}" dest_name="bbMin" src_name="Unnamed"/>
+   <connection to_op="{bbff14ca-da4e-4749-a032-6651a5948469}" copy="false" from_op="{06fb4a95-fba2-4077-bedb-30c8f087f089}" dest_name="bbMax" src_name="Unnamed"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{bbff14ca-da4e-4749-a032-6651a5948469}" dest_name="Axis1 min" src_name="min1"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{bbff14ca-da4e-4749-a032-6651a5948469}" dest_name="Axis1 max" src_name="max1"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{bbff14ca-da4e-4749-a032-6651a5948469}" dest_name="Axis1 interval" src_name="interval1"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{bbff14ca-da4e-4749-a032-6651a5948469}" dest_name="Axis1 sub-interval" src_name="subInterval1"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{bbff14ca-da4e-4749-a032-6651a5948469}" dest_name="Axis2 min" src_name="min2"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{bbff14ca-da4e-4749-a032-6651a5948469}" dest_name="Axis2 max" src_name="max2"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{bbff14ca-da4e-4749-a032-6651a5948469}" dest_name="Axis2 interval" src_name="interval2"/>
+   <connection to_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" copy="false" from_op="{bbff14ca-da4e-4749-a032-6651a5948469}" dest_name="Axis2 sub-interval" src_name="subInterval2"/>
+   <connection to_op="{bbff14ca-da4e-4749-a032-6651a5948469}" copy="false" from_op="{665301c4-fdb5-49ef-b39a-d92956b0efcd}" dest_name="subDivisions" src_name="Grid subdivisions"/>
+   <connection to_op="{975c71e5-5d33-4009-8504-944c8dfcbe32}" copy="false" from_op="{665301c4-fdb5-49ef-b39a-d92956b0efcd}" dest_name="subDivisions" src_name="Grid subdivisions"/>
+  </operation>
+  <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Axes enabled" dataplugin="www.csiro.au/workspace/builtin" bgcolor="4278242304" datatype="bool" id="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" dataname="Axes enabled">
+   <input name="Dependencies" size="0"/>
+   <view width="164" height="87" x="-12" y="470"/>
+  </operation>
+  <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Grid size (fraction of model size)" dataplugin="www.csiro.au/workspace/builtin" bgcolor="4278242304" datatype="double" id="{65229cfc-e4c7-4f81-8b7c-d2fb162517d0}" dataname="Grid size (fraction of model size)">
+   <input name="Dependencies" size="0"/>
+   <view width="164" height="87" x="-522" y="584"/>
+  </operation>
+  <operation type="WorkspaceInput" plugin="www.csiro.au/workspace/builtin" label="Grid subdivisions" dataplugin="www.csiro.au/workspace/builtin" bgcolor="4278242304" datatype="double" id="{8f70581d-1408-4d9b-9fd0-fcfcefa2e63b}" dataname="Grid subdivisions">
+   <input name="Dependencies" size="0"/>
+   <view width="164" height="87" x="-522" y="710"/>
+  </operation>
+  <operation type="CreateAxesModel" plugin="www.csiro.au/workspace/rendering" label="Axes Model" bgcolor="4284395451" id="{237623be-4605-42ac-a4a5-9cc5628fe76e}">
+   <input name="Dependencies" size="0"/>
+   <input rgba="4294901760" name="X axis color"/>
+   <input rgba="4278255360" name="Y axis color"/>
+   <input rgba="4278190335" name="Z axis color"/>
+   <input name="X axis label">X</input>
+   <input name="Y axis label">Y</input>
+   <input name="Z axis label">Z</input>
+   <input name="Axes length">
+    <x>1</x>
+    <y>1</y>
+    <z>1</z>
+   </input>
+   <input name="Tip size">0.10000000000000001</input>
+   <view width="164" height="220" x="-12" y="237.5"/>
+  </operation>
+  <operation type="CreateColorStateShader" plugin="www.csiro.au/workspace/rendering" label="Color state shader" bgcolor="4284395451" id="{7c1a4dc2-709e-4fed-8095-78edc0b04473}">
+   <input name="Dependencies" size="0"/>
+   <input name="Surface representation">5</input>
+   <input name="State name">RGBA</input>
+   <input name="Enable lighting">1</input>
+   <input name="Apply transparency">0</input>
+   <view x="-452" y="389"/>
+  </operation>
+  <connection to_op="{d4c331ee-6e6d-4172-ba10-3af5832d381a}" copy="false" from_op="{2f857232-7415-4f13-9021-293134da22b9}" dest_name="Scene" src_name="Scene"/>
+  <connection to_op="{2f418889-8eab-4c2c-b603-6927e82256a4}" copy="false" from_op="{35ae3323-e17d-4a41-b61b-e37cf3f34883}" dest_index="1" dest_name="Child scene items" src_name="Camera"/>
+  <connection to_op="{2f857232-7415-4f13-9021-293134da22b9}" copy="false" from_op="{2f418889-8eab-4c2c-b603-6927e82256a4}" dest_index="0" dest_name="Scene items" src_name="Transform"/>
+  <connection to_op="{2f418889-8eab-4c2c-b603-6927e82256a4}" copy="false" from_op="{35ae3323-e17d-4a41-b61b-e37cf3f34883}" dest_name="Interaction camera" src_name="Camera"/>
+  <connection to_op="{2f418889-8eab-4c2c-b603-6927e82256a4}" copy="false" from_op="{4f909627-b551-44d1-8343-7040175ca843}" dest_index="0" dest_name="Child scene items" src_name="Directional light"/>
+  <connection to_op="{2f857232-7415-4f13-9021-293134da22b9}" copy="false" from_op="{59b41f76-014f-44a0-b521-305fa61fe6de}" dest_index="3" dest_name="Scene items" src_name="Mesh model instance"/>
+  <connection to_op="{59b41f76-014f-44a0-b521-305fa61fe6de}" copy="false" from_op="{7823b96c-07f4-4622-98dd-ea1aae8c878f}" dest_index="0" dest_name="Clear cached data" src_name="Dependencies"/>
+  <connection to_op="{2f418889-8eab-4c2c-b603-6927e82256a4}" copy="false" from_op="{3fc47fc4-7d8d-46b4-a7cf-360164467719}" dest_index="2" dest_name="Child scene items" src_name="Ambient light"/>
+  <connection to_op="{d106bd77-5e76-40e3-8c17-0896ac4149bc}" copy="false" from_op="{745b276c-9b1b-4d70-8a10-4d1c777c1214}" dest_name="Enabled" src_name="Grids enabled"/>
+  <connection to_op="{237623be-4605-42ac-a4a5-9cc5628fe76e}" copy="false" from_op="{0b8513c8-e5ce-4174-a32a-0fb96b9abaa0}" dest_name="Enabled" src_name="Axes enabled"/>
+  <connection to_op="{d106bd77-5e76-40e3-8c17-0896ac4149bc}" copy="false" from_op="{65229cfc-e4c7-4f81-8b7c-d2fb162517d0}" dest_name="Grid size (fraction of model size)" src_name="Grid size (fraction of model size)"/>
+  <connection to_op="{d106bd77-5e76-40e3-8c17-0896ac4149bc}" copy="false" from_op="{8f70581d-1408-4d9b-9fd0-fcfcefa2e63b}" dest_name="Grid subdivisions" src_name="Grid subdivisions"/>
+  <connection to_op="{2f857232-7415-4f13-9021-293134da22b9}" copy="false" from_op="{237623be-4605-42ac-a4a5-9cc5628fe76e}" dest_index="1" dest_name="Scene items" src_name="Axes"/>
+  <connection to_op="{d106bd77-5e76-40e3-8c17-0896ac4149bc}" copy="false" from_op="{4c6046e9-5256-4014-af84-18c56c6362d6}" dest_name="Mesh model" src_name="Mesh 1"/>
+  <connection to_op="{2f857232-7415-4f13-9021-293134da22b9}" copy="false" from_op="{d106bd77-5e76-40e3-8c17-0896ac4149bc}" dest_index="2" dest_name="Scene items" src_name="Grid Scale"/>
+  <connection to_op="{2f857232-7415-4f13-9021-293134da22b9}" copy="false" from_op="{d106bd77-5e76-40e3-8c17-0896ac4149bc}" dest_index="4" dest_name="Scene items" src_name="Output"/>
+  <connection to_op="{59b41f76-014f-44a0-b521-305fa61fe6de}" copy="false" from_op="{7823b96c-07f4-4622-98dd-ea1aae8c878f}" dest_name="MeshModel" src_name="Mesh"/>
+  <connection to_op="{7823b96c-07f4-4622-98dd-ea1aae8c878f}" copy="false" from_op="{4c6046e9-5256-4014-af84-18c56c6362d6}" dest_name="Mesh" src_name="Mesh 1"/>
+  <connection to_op="{59b41f76-014f-44a0-b521-305fa61fe6de}" copy="false" from_op="{7c1a4dc2-709e-4fed-8095-78edc0b04473}" dest_name="Shader" src_name="Shader"/>
+ </operation>
+ <connection to_op="{d3113288-55f2-44cf-ace7-6e666b324ede}" copy="false" from_op="{f65df40e-71cd-4f75-886e-4ec6c31f586a}" dest_name="Mesh 1" src_name="Mesh model"/>
+</operation>

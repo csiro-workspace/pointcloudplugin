@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PointCloudMesher</class>
+ <widget class="QMainWindow" name="PointCloudMesher">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1139</width>
+    <height>926</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Point cloud to mesh tool</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="CSIRO::Rendering::WSGLWidget" name="wsglWidget">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>0</y>
+      <width>741</width>
+      <height>611</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="wsDataPath" stdset="0">
+     <string>globalName:sceneout</string>
+    </property>
+    <property name="triggerUpdates" stdset="0">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>290</y>
+      <width>161</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Visualise Points</string>
+    </property>
+    <property name="wsDataPath" stdset="0">
+     <string>globalName:pointsvis</string>
+    </property>
+    <property name="triggerUpdates" stdset="0">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>290</y>
+      <width>161</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Visualise Mesh</string>
+    </property>
+    <property name="wsDataPath" stdset="0">
+     <string>globalName:meshvis</string>
+    </property>
+    <property name="triggerUpdates" stdset="0">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QWidget" name="formLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>10</y>
+      <width>380</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>File Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="CSIRO::Widgets::FileNameWidget" name="fileNameWidget">
+       <property name="wsDataPath" stdset="0">
+        <string>globalName:plyfilename</string>
+       </property>
+       <property name="triggerUpdates" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Point merge radius</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="pointmerge">
+       <property name="decimals">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.001000000000000</double>
+       </property>
+       <property name="wsDataPath" stdset="0">
+        <string>globalName:pmergerad</string>
+       </property>
+       <property name="triggerUpdates" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Search Radius</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="search">
+       <property name="decimals">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.001000000000000</double>
+       </property>
+       <property name="wsDataPath" stdset="0">
+        <string>globalName:searchrad</string>
+       </property>
+       <property name="triggerUpdates" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Multiplier</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="multiplier">
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="wsDataPath" stdset="0">
+        <string>globalName:pmultiplier</string>
+       </property>
+       <property name="triggerUpdates" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Max NNR</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QDoubleSpinBox" name="nnr">
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <double>250.000000000000000</double>
+       </property>
+       <property name="wsDataPath" stdset="0">
+        <string>globalName:pmaxnnr</string>
+       </property>
+       <property name="triggerUpdates" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Max surf angle</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QDoubleSpinBox" name="maxsa">
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="wsDataPath" stdset="0">
+        <string>globalName:pmaxsa</string>
+       </property>
+       <property name="triggerUpdates" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Min angle</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QDoubleSpinBox" name="minangle">
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="wsDataPath" stdset="0">
+        <string>globalName:pmina</string>
+       </property>
+       <property name="triggerUpdates" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Max angle</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QDoubleSpinBox" name="maxangle">
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="wsDataPath" stdset="0">
+        <string>globalName:pmaxa</string>
+       </property>
+       <property name="triggerUpdates" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="CSIRO::Mesh::MeshModelInterfaceWidget" name="MeshModelInterfaceWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>360</y>
+      <width>371</width>
+      <height>691</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="wsDataPath" stdset="0">
+     <string>globalName:mmodelstats</string>
+    </property>
+    <property name="triggerUpdates" stdset="0">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="CSIRO::Presentation::TextViewer" name="logViewer">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>619</y>
+      <width>741</width>
+      <height>151</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>320</y>
+      <width>181</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reconstruct Surface</string>
+    </property>
+    <property name="wsDataPath" stdset="0">
+     <string>globalName:runmeshstep</string>
+    </property>
+    <property name="triggerUpdates" stdset="0">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1139</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CSIRO::Mesh::MeshModelInterfaceWidget</class>
+   <extends>QWidget</extends>
+   <header>Mesh/Widgets/meshmodelinterfacewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CSIRO::Rendering::WSGLWidget</class>
+   <extends>QWidget</extends>
+   <header>Rendering/OpenGL/wsglwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CSIRO::Widgets::FileNameWidget</class>
+   <extends>QFrame</extends>
+   <header>Workspace/Widgets/filenamewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CSIRO::Presentation::TextViewer</class>
+   <extends>QTextEdit</extends>
+   <header>Workspace/Presentation/Logging/textviewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

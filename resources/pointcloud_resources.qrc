@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images/PointCloud">
+        <file>pcl-icon.png</file>
+    </qresource>
+</RCC>
