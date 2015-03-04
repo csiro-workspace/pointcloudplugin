@@ -20,7 +20,9 @@
 #  This copyright notice must be included with all copies of the source code.
 #
 #============================================================================
-
+set(LIDAR_HEADERS
+    ${CMAKE_CURRENT_LIST_DIR}/lasreader.h
+)
 set(HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/iterativeclosestpoint.h
     ${CMAKE_CURRENT_LIST_DIR}/smoothesigneddistance.h
@@ -29,7 +31,6 @@ set(HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/organizedsurfacereconstruction.h
     ${CMAKE_CURRENT_LIST_DIR}/unorganizedsurfacereconstruction.h
     ${CMAKE_CURRENT_LIST_DIR}/removestatisticaloutliers.h
-    ${CMAKE_CURRENT_LIST_DIR}/lasreader.h
     ${CMAKE_CURRENT_LIST_DIR}/movingleastsquares.h
     ${CMAKE_CURRENT_LIST_DIR}/mlsvoxel.h
     ${CMAKE_CURRENT_LIST_DIR}/mlssample.h
@@ -54,6 +55,9 @@ set(INSTALL_HEADERS
 set(MOC_HEADERS
 )
 
+set(LIDAR_SOURCES
+    ${CMAKE_CURRENT_LIST_DIR}/lasreader.cpp
+)
 set(SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/iterativeclosestpoint.cpp
     ${CMAKE_CURRENT_LIST_DIR}/smoothesigneddistance.cpp
@@ -62,8 +66,7 @@ set(SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/mergenearbynodes.cpp
     ${CMAKE_CURRENT_LIST_DIR}/organizedsurfacereconstruction.cpp
     ${CMAKE_CURRENT_LIST_DIR}/unorganizedsurfacereconstruction.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/removestatisticaloutliers.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/lasreader.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/removestatisticaloutliers.cpp    
     ${CMAKE_CURRENT_LIST_DIR}/movingleastsquares.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlsvoxel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlssample.cpp
