@@ -47,7 +47,10 @@
 #include "normalestimation.h"
 #include "poissonreconstruction.h"
 #include "pclmeshmodelinterface.h"
+
+#ifndef NO_LIBLAS
 #include "lasreader.h"
+#endif
 
 namespace CSIRO
 {
@@ -114,8 +117,9 @@ namespace PointCloud
 
         //addFactory( CSIRO::DataExecution::OperationFactoryTraits<OrganizedSurfaceReconstruction>::getInstance() ); needs work
         addFactory( CSIRO::DataExecution::OperationFactoryTraits<UnorganizedSurfaceReconstruction>::getInstance() );
+        #ifndef NO_LIBLAS
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<LasReader>::getInstance());
-
+        #endif
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<RemoveStatisticalOutliers>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<MovingLeastSquares>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<MlsVoxel>::getInstance() );

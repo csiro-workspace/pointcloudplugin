@@ -10,15 +10,14 @@ Contributors
 - Matt Bolger - 
 Computational Software and Visualisation, CSIRO Digital Productivity, Clayton VIC
 - Stuart Mead -
-Risk Frontiers, Dept. of Environmental Sciences, Macquarie University, North Ryde NSW
-CSIRO Digital Productivity, Clayton VIC
+Risk Frontiers, Dept. of Environmental Sciences, Macquarie University, North Ryde NSW and CSIRO Digital Productivity, Clayton VIC
 
 Compiling and using the plugin
 ------------------------------
 1. Download and install [CSIRO Workspace](https://research.csiro.au/workspace/download/)
 2. Download and install [PCL](http://pointclouds.org/) (or build a version yourself)
 3. Checkout this repository
-4. For LAS/LAZ support checkout [libLAS](http://www.liblas.org/) and [LASzip](http://www.laszip.org/) in sibling directories to this project's source
+4. If you want LAS/LAZ support checkout [libLAS](http://www.liblas.org/) and [LASzip](http://www.laszip.org/) in sibling directories to this project's source
 5. Launch CMake from Workspace's Development menu to configure and generate the project. This needs to be done from within Workspace rather than running CMake directly as some key environment variables get setup.
 6. Compile the project
 7. Copy Install\installAreas\installArea-PointClouds.txt from your build directory to Workspace's installAreas directory
