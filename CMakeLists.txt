@@ -62,7 +62,9 @@ if ((NOT EXISTS "${LIBLAS_SOURCE}/include/liblas/liblas.hpp") OR
     message("Unable to locate either libLAS or LASzip source code. "
             "Please set LIBLAS_SOURCE and LASZIP_SOURCE cache variables to enable this support")
 	add_definitions(-DNO_LIBLAS)
+    set(LIBLAS_LIBRARY "")
 else()
+    set(USE_LIBLAS TRUE)
     set(EXTERNAL_CMAKE_GENERATOR "Unix Makefiles")
     if (WIN32)
         set(EXTERNAL_CMAKE_GENERATOR "NMake Makefiles")
@@ -134,16 +136,9 @@ qtx_wrap_ui(UIC_SOURCES ${UI_SOURCES})
 qtx_add_resources(RESOURCES resources/pointcloud_resources.qrc)
 
 add_definitions(-DPOINTCLOUD_PLUGIN_VERSION=${POINTCLOUD_PLUGIN_VERSION})
-
-if ((NOT EXISTS "${LIBLAS_SOURCE}/include/liblas/liblas.hpp") OR 
-    (NOT EXISTS "${LASZIP_SOURCE}/include/laszip/laszip.hpp"))
-	add_library(pointcloudplugin ${SOURCES} ${HEADERS} ${MOC_SOURCES} ${UIC_SOURCES} ${RESOURCES})
-	target_link_libraries(pointcloudplugin dataanalysisplugin meshplugin workspace dgp octree ssd ${PCL_LIBRARIES} ${QT_LIBRARIES})
-else()
-	add_library(pointcloudplugin ${SOURCES} ${HEADERS} ${LIDAR_SOURCES} ${LIDAR_HEADERS} ${MOC_SOURCES} ${UIC_SOURCES} ${RESOURCES})
-	target_link_libraries(pointcloudplugin dataanalysisplugin meshplugin workspace dgp octree ssd ${PCL_LIBRARIES} ${LIBLAS_LIBRARY} ${QT_LIBRARIES})
-endif()
-
+add_library(pointcloudplugin ${SOURCES} ${HEADERS} ${MOC_SOURCES} ${UIC_SOURCES} ${RESOURCES})
+message(STATUS ${LASZIP_LIBRARY})
+target_link_libraries(pointcloudplugin dataanalysisplugin meshplugin workspace dgp octree ssd ${LIBLAS_LIBRARY} ${PCL_LIBRARIES} ${QT_LIBRARIES})
 
 set_target_properties(pointcloudplugin PROPERTIES
     DEFINE_SYMBOL CSIRO_POINTCLOUD_EXPORT

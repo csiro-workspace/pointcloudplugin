@@ -20,9 +20,7 @@
 #  This copyright notice must be included with all copies of the source code.
 #
 #============================================================================
-set(LIDAR_HEADERS
-    ${CMAKE_CURRENT_LIST_DIR}/lasreader.h
-)
+
 set(HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/iterativeclosestpoint.h
     ${CMAKE_CURRENT_LIST_DIR}/smoothesigneddistance.h
@@ -55,9 +53,6 @@ set(INSTALL_HEADERS
 set(MOC_HEADERS
 )
 
-set(LIDAR_SOURCES
-    ${CMAKE_CURRENT_LIST_DIR}/lasreader.cpp
-)
 set(SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/iterativeclosestpoint.cpp
     ${CMAKE_CURRENT_LIST_DIR}/smoothesigneddistance.cpp
@@ -79,6 +74,14 @@ set(SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/pclmeshnodesinterface.cpp
     ${CMAKE_CURRENT_LIST_DIR}/poissonreconstruction.cpp
 )
+
+if (USE_LIBLAS)
+    list(APPEND HEADERS
+         ${CMAKE_CURRENT_LIST_DIR}/lasreader.h)
+         
+    list(APPEND SOURCES
+         ${CMAKE_CURRENT_LIST_DIR}/lasreader.cpp)
+endif()
 
 set(UI_SOURCES
 )
