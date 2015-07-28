@@ -112,14 +112,8 @@ namespace PointCloud
         // Add your operation factories like this:
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<MergeNearbyNodes>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<RadiusOutlierRemoval>::getInstance());
-        addFactory(CSIRO::DataExecution::OperationFactoryTraits<SmootheSignedDistance>::getInstance());
-        addFactory(CSIRO::DataExecution::OperationFactoryTraits<IterativeClosestPoint>::getInstance());
-
         //addFactory( CSIRO::DataExecution::OperationFactoryTraits<OrganizedSurfaceReconstruction>::getInstance() ); needs work
         addFactory( CSIRO::DataExecution::OperationFactoryTraits<UnorganizedSurfaceReconstruction>::getInstance() );
-        #ifndef NO_LIBLAS
-        addFactory(CSIRO::DataExecution::OperationFactoryTraits<LasReader>::getInstance());
-        #endif
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<RemoveStatisticalOutliers>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<MovingLeastSquares>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<MlsVoxel>::getInstance() );
@@ -130,6 +124,10 @@ namespace PointCloud
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<PoissonReconstruction>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<SmootheSignedDistance>::getInstance());
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<IterativeClosestPoint>::getInstance());
+        
+#ifndef NO_LIBLAS
+        addFactory(CSIRO::DataExecution::OperationFactoryTraits<LasReader>::getInstance());
+#endif
         
         // Add your widget factories like this:
         //addFactory( MyNamespace::MyWidgetFactory::getInstance() );
