@@ -102,7 +102,6 @@ namespace PointCloud
 
         // Data objects
         DataExecution::TypedObject< MeshModelInterface >  dataMesh_;
-        DataExecution::TypedObject< MeshModelInterface >  dataOutputMesh_;
         DataExecution::TypedObject< double >              numberofNeighbours_;
         DataExecution::TypedObject< double >              sdevThreshold_;
 
@@ -127,13 +126,12 @@ namespace PointCloud
     RemoveStatisticalOutliersImpl::RemoveStatisticalOutliersImpl(RemoveStatisticalOutliers& op) :
         op_(op),
         dataMesh_(),
-        dataOutputMesh_(),
         numberofNeighbours_(50),
         sdevThreshold_(1.0),
-        inputMesh_("Points", dataMesh_, op_),
+        inputMesh_("Points", dataMesh_, op_, true),
         inputnumberofNeighbours_("Number of Neighbours to search", numberofNeighbours_, op_),
         inputsdevThreshold_("Standard Deviation Threshold", sdevThreshold_, op_),
-        outputMesh_("Mesh Model", dataOutputMesh_, op_)
+        outputMesh_("Points", dataMesh_, op_)
     {
         inputnumberofNeighbours_.setDescription("Sets the number of points to use for mean distance estimation");
         inputsdevThreshold_.setDescription("Sets the standard deviation threshold. All points outside the mean+-STD*multiplier threshold will be considered outliers.");
@@ -146,53 +144,26 @@ namespace PointCloud
     bool RemoveStatisticalOutliersImpl::execute()
     {
         MeshModelInterface& mesh = *dataMesh_;
-        MeshModelInterface& outputMesh = *dataOutputMesh_;
-
         MeshNodesInterface& nodes = mesh.getNodes();
-        if (!nodes.hasState("RGBA"))//Just throw a warning and add a rgb state of 0
-        {
-            std::cout << QString("WARNING: Nodes do not have RGBA state, will add it now") + "\n";
-            nodes.addState< int >("RGBA",0);
-        }
+        
+        const NodeStateHandle& keepNodeState = nodes.addState<MeshModelInterface::int_type>("tmp_keep", 0);
 
-        NodeStateHandle inputRgba = nodes.getStateHandle("RGBA");
-        outputMesh.clear();//Always clear output mesh
-        MeshNodesInterface& outputNodes = outputMesh.getNodes();
-
-        //Kinect stuff
-        const NodeStateHandle* pixIdStateIn = 0;
-        const NodeStateHandle* textureSStateOut = 0;
-        const NodeStateHandle* textureTStateOut = 0;
-        if (nodes.hasState("pixId"))
-        {
-            pixIdStateIn = &nodes.getStateHandle("pixId");
-            textureSStateOut = &outputNodes.addState<double>("textureS", 0.0);
-            textureTStateOut = &outputNodes.addState<double>("textureT", 0.0);
-        }
-    
-        //Finish if input mesh is empty
-        if(nodes.size() == 0)
-        {
-            return true;
-        }
-
-        //For each node add point to point cloud
+        // For each node add point to point cloud
         pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
         MeshNodesInterface::const_iterator nIter = nodes.begin();
         MeshNodesInterface::const_iterator end = nodes.end();
         for(; nIter != end; ++nIter)
         {
-            int rgba = 0; 
-            Vector3d v = nodes.getPosition(*nIter);
-            nodes.getState(*nIter,inputRgba,rgba);
+           Vector3d v = nodes.getPosition(*nIter);
            pcl::PointXYZRGBA p;
            p.x = v.x;
            p.y = v.y;
            p.z = v.z;
-           p.rgba = rgba;   
+           p.rgba = nIter->getIndex();  // store index in rgba
            cloud->push_back(pcl::PointXYZRGBA(p));
         }
-        //Create the filtered point cloud
+
+        // Create the filtered point cloud
         pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
         // Create the filtering object
@@ -200,21 +171,29 @@ namespace PointCloud
         sor.setInputCloud (cloud);
         sor.setMeanK (*numberofNeighbours_);
         sor.setStddevMulThresh (*sdevThreshold_);
-        sor.filter (*cloud_filtered);        
-
-        //Now add the filtered nodes to the output mesh model
-        NodeStateHandle rgbahandle = outputNodes.addState< int >("RGBA", 0);
+        sor.filter (*cloud_filtered);
     
+        // Mark all the nodes that still exist in the filtered cloud
         for (size_t i = 0; i < cloud_filtered->points.size (); ++i)
         {
-            Vector3d vo;
-            vo.x = cloud_filtered->points[i].x;
-            vo.y = cloud_filtered->points[i].y;
-            vo.z = cloud_filtered->points[i].z;
-            NodeHandle node = outputNodes.add(vo);
-            int alph = static_cast<int> (cloud_filtered->points[i].rgba);
-            outputNodes.setState(node,rgbahandle,alph);
+            NodeHandle n(cloud_filtered->points[i].rgba);
+            nodes.setState(n, keepNodeState, 1);
         }
+
+        // Delete any points not marked to keep
+        MeshModelInterface::int_type keep;
+        nIter = nodes.begin();
+        for(; nIter != end; ++nIter)
+        {
+            nodes.getState(*nIter, keepNodeState, keep);
+            if (!keep)
+            {
+                nodes.remove(*nIter);
+            }
+        }
+
+        nodes.removeState(keepNodeState);
+        mesh.emptyTrash();
         
         return true;
     }
