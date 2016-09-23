@@ -28,6 +28,7 @@
 
 #include <QFileInfo>
 
+#include "Workspace/Application/System/systemutilities.h"
 #include "Workspace/DataExecution/DataObjects/typedobject.h"
 #include "Workspace/DataExecution/InputOutput/output.h"
 #include "Workspace/DataExecution/InputOutput/inputscalar.h"
@@ -105,18 +106,14 @@ namespace PointCloud
      */
     bool  PcdReader::execute()
     {
+        QString fileName = CSIRO::System::Utilities::downloadIfRemote(*pImpl_->fileName_, getLabel());
+
         PclMeshModelInterface* meshInterface = new PclMeshModelInterface();
         pImpl_->mesh_.setData(meshInterface, true);
-
-        if (!QFileInfo(*pImpl_->fileName_).exists())
+        
+        if (pcl::io::loadPCDFile<PclMeshNodesInterface::point_t>(fileName.toStdString(), *meshInterface->getPointCloud()) != 0)
         {
-            logText(tr("ERROR: %1 does not exist\n").arg(*pImpl_->fileName_));
-            return false;
-        }
-
-        if (pcl::io::loadPCDFile<PclMeshNodesInterface::point_t> (pImpl_->fileName_->toStdString(), meshInterface->getPointCloud()) != 0)
-        {
-            logText(tr("ERROR: loadPCDFile() failed for %1\n").arg(*pImpl_->fileName_));
+            logText(tr("ERROR: loadPCDFile() failed for %1 %2\n").arg(fileName).arg(*pImpl_->fileName_));
             return false;
         }
 

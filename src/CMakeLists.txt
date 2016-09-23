@@ -23,7 +23,6 @@
 
 set(HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/iterativeclosestpoint.h
-    ${CMAKE_CURRENT_LIST_DIR}/smoothesigneddistance.h
     ${CMAKE_CURRENT_LIST_DIR}/radiusoutlierremoval.h
     ${CMAKE_CURRENT_LIST_DIR}/mergenearbynodes.h
     ${CMAKE_CURRENT_LIST_DIR}/organizedsurfacereconstruction.h
@@ -35,8 +34,7 @@ set(HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/mlsrandomuniform.h
     ${CMAKE_CURRENT_LIST_DIR}/detectholes.h
     ${CMAKE_CURRENT_LIST_DIR}/normalestimation.h
-    # Excluded for now as prebuilt PCL io module adds a Qt4 dependency 
-    #${CMAKE_CURRENT_LIST_DIR}/pcdreader.h
+    ${CMAKE_CURRENT_LIST_DIR}/pcdreader.h
     ${CMAKE_CURRENT_LIST_DIR}/pclmeshmodelinterface.h
     ${CMAKE_CURRENT_LIST_DIR}/pclmeshnodesinterface.h
     ${CMAKE_CURRENT_LIST_DIR}/poissonreconstruction.h
@@ -55,7 +53,6 @@ set(MOC_HEADERS
 
 set(SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/iterativeclosestpoint.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/smoothesigneddistance.cpp
     ${CMAKE_CURRENT_LIST_DIR}/radiusoutlierremoval.cpp
     ${CMAKE_CURRENT_LIST_DIR}/pointcloudplugin.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mergenearbynodes.cpp
@@ -68,19 +65,26 @@ set(SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/mlsrandomuniform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/detectholes.cpp
     ${CMAKE_CURRENT_LIST_DIR}/normalestimation.cpp
-    # Excluded for now as prebuilt PCL io module adds a Qt4 dependency 
-    #${CMAKE_CURRENT_LIST_DIR}/pcdreader.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/pcdreader.cpp
     ${CMAKE_CURRENT_LIST_DIR}/pclmeshmodelinterface.cpp
     ${CMAKE_CURRENT_LIST_DIR}/pclmeshnodesinterface.cpp
     ${CMAKE_CURRENT_LIST_DIR}/poissonreconstruction.cpp
 )
 
-if (USE_LIBLAS)
+if (BUILD_LASLAZ)
     list(APPEND HEADERS
          ${CMAKE_CURRENT_LIST_DIR}/lasreader.h)
          
     list(APPEND SOURCES
          ${CMAKE_CURRENT_LIST_DIR}/lasreader.cpp)
+endif()
+
+if (BUILD_SSD)
+    list(APPEND HEADERS
+         ${CMAKE_CURRENT_LIST_DIR}/smoothesigneddistance.h)
+         
+    list(APPEND SOURCES
+         ${CMAKE_CURRENT_LIST_DIR}/smoothesigneddistance.cpp)
 endif()
 
 set(UI_SOURCES

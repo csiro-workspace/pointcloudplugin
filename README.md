@@ -3,14 +3,14 @@ Point Cloud plugin for CSIRO Workspace
 
 This project is a plugin for the [CSIRO Workspace](https://research.csiro.au/workspace/) scientific workflow framework. Its purpose is to expose existing open source libraries including [PCL](http://pointclouds.org/), [libLAS](http://www.liblas.org/), [LASzip](http://www.laszip.org/) and [SSD Surface Reconstruction](http://mesh.brown.edu/ssd/software.html) for use in Workspace to support point cloud processing and visualisation workflows. 
 
-This plugin is very early in development and only exposes a small percentage of data structures and algorithms from the listed libraries. Feedback and contributions are more than welcome to help expand its capabilities. 
+This plugin is very early in development and only exposes a small percentage of data structures and algorithms from the listed libraries. Please contact the Workspace development team if you're interested in using PCL in Workspace and would like support getting started. Feedback and contributions are more than welcome to help expand its capabilities.
 
 Contributors
 ------------
 - Matt Bolger - 
 Computational Software and Visualisation, CSIRO Data61, Clayton VIC
 - Stuart Mead -
-Risk Frontiers, Dept. of Environmental Sciences, Macquarie University, North Ryde NSW and CSIRO Digital Productivity, Clayton VIC
+Risk Frontiers, Dept. of Environmental Sciences, Macquarie University, North Ryde NSW (prev. CSIRO Digital Productivity, Clayton VIC)
 
 Compiling and using the plugin
 ------------------------------
@@ -28,7 +28,7 @@ About CSIRO Workspace
 ---------------------
 Workspace is a powerful scientific application framework and workflow editor which has been in development for over 7 years. Originally designed to construct workflows for scientists in the computational fluid dynamics space, Workspace recognises the importance of interactivity, visualisation, scalability, and ease-of-use in a scientific workflow. It ships with out of the box support for things like mesh processing, interactive 3D visualisation, plotting, networking and database access and is designed to be easily extended through plugins. More than just a workflow editor, Workspace offers a natural path from early code development as part of a research workflow right through to the development of standalone applications for deployment to a collaborator or external client.
 
-Workspace is developed by the Computational Modelling and Simulation Group of Australia’s Commonwealth Scientific and Industrial Research Organisation (CSIRO). Workspace has been developed with support from CSIRO eResearch, Computational and Simulation Sciences and the Digital Productivity Flagship.
+Workspace is developed by the Computational Modelling and Simulation Group of Australia’s Commonwealth Scientific and Industrial Research Organisation (CSIRO). Workspace has been developed with support from CSIRO eResearch, Computational and Simulation Sciences and Data61.
 
 For more details or to contact the team see the [Workspace research page](https://research.csiro.au/workspace/).
 

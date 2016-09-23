@@ -47,9 +47,13 @@
 #include "normalestimation.h"
 #include "poissonreconstruction.h"
 #include "pclmeshmodelinterface.h"
+#include "pcdreader.h"
 
-#ifndef NO_LIBLAS
+#ifdef BUILD_LASLAZ
 #include "lasreader.h"
+#endif
+#ifdef BUILD_SSD
+#include "smoothesigneddistance.h"
 #endif
 
 namespace CSIRO
@@ -112,8 +116,7 @@ namespace PointCloud
         // Add your operation factories like this:
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<MergeNearbyNodes>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<RadiusOutlierRemoval>::getInstance());
-        //addFactory( CSIRO::DataExecution::OperationFactoryTraits<OrganizedSurfaceReconstruction>::getInstance() ); needs work
-        addFactory( CSIRO::DataExecution::OperationFactoryTraits<UnorganizedSurfaceReconstruction>::getInstance() );
+        addFactory(CSIRO::DataExecution::OperationFactoryTraits<UnorganizedSurfaceReconstruction>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<RemoveStatisticalOutliers>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<MovingLeastSquares>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<MlsVoxel>::getInstance() );
@@ -122,11 +125,15 @@ namespace PointCloud
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<DetectHoles>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<NormalEstimation>::getInstance() );
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<PoissonReconstruction>::getInstance() );
-        addFactory(CSIRO::DataExecution::OperationFactoryTraits<SmootheSignedDistance>::getInstance());
+        addFactory(CSIRO::DataExecution::OperationFactoryTraits<PcdReader>::getInstance());
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<IterativeClosestPoint>::getInstance());
         
-#ifndef NO_LIBLAS
+#ifdef BUILD_LASLAZ
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<LasReader>::getInstance());
+#endif
+
+#ifdef BUILD_SSD
+        addFactory(CSIRO::DataExecution::OperationFactoryTraits<SmootheSignedDistance>::getInstance());
 #endif
         
         // Add your widget factories like this:

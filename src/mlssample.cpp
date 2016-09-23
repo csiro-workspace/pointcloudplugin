@@ -82,7 +82,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <pcl/io/pcd_io.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/surface/mls.h>
-#include <pcl/surface/mls_omp.h>
 
 namespace CSIRO
 {
@@ -233,6 +232,7 @@ namespace PointCloud
         // Output has the PointNormal type in order to store the normals from mls
         pcl::PointCloud<pcl::PointNormal> mls_cloud;
 
+#ifdef _OPENMP
         if (*dataOMP_)
         {
             // Init object (second point type is for the normals, even if unused)
@@ -266,8 +266,10 @@ namespace PointCloud
             }
             //Reconstruct
             mls.process(mls_cloud);
-        }
-        else {
+        }        
+        else 
+#endif
+        {
             // Init object (second point type is for the normals, even if unused)
             pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointNormal> mls;
             //For time being, we will make sure we only calc normals, maybe not later.  

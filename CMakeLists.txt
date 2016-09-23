@@ -44,80 +44,95 @@ include(ExternalProject)
 set(POINTCLOUD_PLUGIN_VERSION ${CSIRO_WORKSPACE_VERSION})
 string(REGEX MATCH "^[0-9]+" POINTCLOUD_PLUGIN_SOVERSION ${POINTCLOUD_PLUGIN_VERSION})
 
+set(CMAKE_AUTOMOC ON)
+
 find_package(Qt5Core)
 find_package(Qt5Widgets)
 set(QT_LIBRARIES Qt5::Core;Qt5::Widgets)
 
-message(STATUS "If Boost detection fails as part of finding PCL, explicitly add a CMake variable for Boost_INCLUDE_DIR pointing to the version of boost being used by PCL (eg. C:/Program Files/PCL 1.6.0/3rdParty/Boost/include for the Windows All-in-one installer). This prevents the Boost version that ships with Workspace for Python support causing issues.")
+# Workspace team's convention is to have a Tools/ThirdParty folder for pre-built dependent tools (this folder contains bin, include etc)
+set(PCL_TOOLS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/PCL" CACHE PATH "Third party pre-built tools directory")
+if (NOT EXISTS "${PCL_TOOLS_DIRECTORY}/cmake/PCLConfig.cmake")
+    message(FATAL_ERROR "Please set PCL_TOOLS_DIRECTORY to the location of your PCL build")
+endif()
+set(PCL_DIR "${PCL_TOOLS_DIRECTORY}/cmake")
 
+option(PCL_FIND_QUIETLY "Less PCL debug spam" TRUE)
 find_package(PCL 1.3 REQUIRED COMPONENTS common features surface kdtree search filters)
-    include_directories(${PCL_INCLUDE_DIRS})
-    link_directories(${PCL_LIBRARY_DIRS})
-    add_definitions(${PCL_DEFINITIONS})
-    set(PCL_USED_LIBS ${PCL_COMMON_LIBRARIES} ${PCL_FEATURES_LIBRARIES} ${PCL_SURFACE_LIBRARIES} ${PCL_KDTREE_LIBRARIES} ${PCL_SEARCH_LIBRARIES}  ${PCL_COMMON_LIBRARIES} ${PCL_FEATURES_LIBRARIES} ${PCL_SURFACE_LIBRARIES} ${PCL_KDTREE_LIBRARIES} ${PCL_FILTERS_LIBRARIES})
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+set(PCL_USED_LIBS ${PCL_COMMON_LIBRARIES} ${PCL_FEATURES_LIBRARIES} ${PCL_SURFACE_LIBRARIES} ${PCL_KDTREE_LIBRARIES} ${PCL_SEARCH_LIBRARIES}  ${PCL_COMMON_LIBRARIES} ${PCL_FEATURES_LIBRARIES} ${PCL_SURFACE_LIBRARIES} ${PCL_KDTREE_LIBRARIES} ${PCL_FILTERS_LIBRARIES})
     
-# Build libLAS with LASzip support if the source if available    
-set(LIBLAS_SOURCE "${CMAKE_CURRENT_LIST_DIR}/../libLAS" CACHE PATH "Location of the libLAS source code")
-set(LASZIP_SOURCE "${CMAKE_CURRENT_LIST_DIR}/../LASzip" CACHE PATH "Location of the LASzip source code")
-if ((NOT EXISTS "${LIBLAS_SOURCE}/include/liblas/liblas.hpp") OR 
-    (NOT EXISTS "${LASZIP_SOURCE}/include/laszip/laszip.hpp"))
-    message("Unable to locate either libLAS or LASzip source code. "
-            "Please set LIBLAS_SOURCE and LASZIP_SOURCE cache variables to enable this support")
-	add_definitions(-DNO_LIBLAS)
-    set(LIBLAS_LIBRARY "")
-else()
-    set(USE_LIBLAS TRUE)
-    set(EXTERNAL_CMAKE_GENERATOR "Unix Makefiles")
-    if (WIN32)
-        set(EXTERNAL_CMAKE_GENERATOR "NMake Makefiles")
-    endif()
-    
-    # The libs/dlls/so/dylibs won't exist until we do first compile and 
-    # ExternalProject_Add makes it - hence can't use find_file/find_library.
-    
-    # Todo: fix this somehow or at least setup platform specific targets
-    if (WIN32)
-        set(LIBLAS_LIBRARY     ${CMAKE_BINARY_DIR}-libLAS/bin/RelWithDebInfo/liblas.lib)
-        set(LIBLAS_DYNAMIC_LIB ${CMAKE_BINARY_DIR}-libLAS/bin/RelWithDebInfo/liblas.dll)
-        set(LASZIP_LIBRARY     ${CMAKE_BINARY_DIR}-LASzip/bin/laszip.lib)    
-        set(LASZIP_DYNAMIC_LIB ${CMAKE_BINARY_DIR}-LASzip/bin/laszip.dll)
+option(BUILD_LASLAZ "Build libLAS and LASzip support" OFF)
+if (BUILD_LASLAZ)    
+    # Build libLAS with LASzip support if the source if available    
+    set(LIBLAS_SOURCE "${CMAKE_CURRENT_LIST_DIR}/../libLAS" CACHE PATH "Location of the libLAS source code")
+    set(LASZIP_SOURCE "${CMAKE_CURRENT_LIST_DIR}/../LASzip" CACHE PATH "Location of the LASzip source code")
+    if ((NOT EXISTS "${LIBLAS_SOURCE}/include/liblas/liblas.hpp") OR 
+        (NOT EXISTS "${LASZIP_SOURCE}/include/laszip/laszip.hpp"))
+        message("Unable to locate either libLAS or LASzip source code. "
+                "Please set LIBLAS_SOURCE and LASZIP_SOURCE cache variables to enable this support")
+        set(LIBLAS_LIBRARY "")
     else()
-        message("Need to setup libLAS/LASzip target names for this platform")
+        add_definitions(-DBUILD_LASLAZ)
+        set(EXTERNAL_CMAKE_GENERATOR "Unix Makefiles")
+        if (WIN32)
+            set(EXTERNAL_CMAKE_GENERATOR "NMake Makefiles")
+        endif()
+        
+        # The libs/dlls/so/dylibs won't exist until we do first compile and 
+        # ExternalProject_Add makes it - hence can't use find_file/find_library.
+        
+        # Todo: fix this somehow or at least setup platform specific targets
+        if (WIN32)
+            set(LIBLAS_LIBRARY     ${CMAKE_BINARY_DIR}-libLAS/bin/RelWithDebInfo/liblas.lib)
+            set(LIBLAS_DYNAMIC_LIB ${CMAKE_BINARY_DIR}-libLAS/bin/RelWithDebInfo/liblas.dll)
+            set(LASZIP_LIBRARY     ${CMAKE_BINARY_DIR}-LASzip/bin/laszip.lib)    
+            set(LASZIP_DYNAMIC_LIB ${CMAKE_BINARY_DIR}-LASzip/bin/laszip.dll)
+        else()
+            message("Need to setup libLAS/LASzip target names for this platform")
+        endif()
+        
+        ExternalProject_Add(
+            LASzip
+            SOURCE_DIR ${LASZIP_SOURCE}
+            CMAKE_GENERATOR ${EXTERNAL_CMAKE_GENERATOR}
+            CMAKE_CACHE_ARGS -DLASZIP_BUILDOSGEO4W:BOOL=FALSE -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo
+            BINARY_DIR "${CMAKE_BINARY_DIR}-LASzip"
+            INSTALL_COMMAND "")
+                    
+        include_directories(${LASZIP_SOURCE}/include)
+                    
+        ExternalProject_Add(
+            libLAS
+            DEPENDS LASzip
+            SOURCE_DIR ${LIBLAS_SOURCE}
+            CMAKE_GENERATOR ${EXTERNAL_CMAKE_GENERATOR}
+            CMAKE_CACHE_ARGS 
+                -DWITH_LASZIP:BOOL=TRUE 
+                -DLASZIP_INCLUDE_DIR:PATH=${LASZIP_SOURCE}/include 
+                -DLASZIP_LIBRARY:FILEPATH=${LASZIP_LIBRARY}
+                -DBUILD_OSGEO4W:BOOL=FALSE 
+                -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo 
+                -DBOOST_ROOT:PATH=${Boost_INCLUDE_DIR}
+            BINARY_DIR "${CMAKE_BINARY_DIR}-libLAS"
+            INSTALL_COMMAND "")
+            
+        include_directories(${LIBLAS_SOURCE}/include)        
     endif()
-    
-    ExternalProject_Add(
-        LASzip
-        SOURCE_DIR ${LASZIP_SOURCE}
-        CMAKE_GENERATOR ${EXTERNAL_CMAKE_GENERATOR}
-        CMAKE_CACHE_ARGS -DLASZIP_BUILDOSGEO4W:BOOL=FALSE -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo
-        BINARY_DIR "${CMAKE_BINARY_DIR}-LASzip"
-        INSTALL_COMMAND "")
-                
-    include_directories(${LASZIP_SOURCE}/include)
-                
-    ExternalProject_Add(
-        libLAS
-        DEPENDS LASzip
-        SOURCE_DIR ${LIBLAS_SOURCE}
-        CMAKE_GENERATOR ${EXTERNAL_CMAKE_GENERATOR}
-        CMAKE_CACHE_ARGS 
-            -DWITH_LASZIP:BOOL=TRUE 
-            -DLASZIP_INCLUDE_DIR:PATH=${LASZIP_SOURCE}/include 
-            -DLASZIP_LIBRARY:FILEPATH=${LASZIP_LIBRARY}
-            -DBUILD_OSGEO4W:BOOL=FALSE 
-            -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo 
-            -DBOOST_ROOT:PATH=${Boost_INCLUDE_DIR}
-        BINARY_DIR "${CMAKE_BINARY_DIR}-libLAS"
-        INSTALL_COMMAND "")
-        
-    include_directories(${LIBLAS_SOURCE}/include)
-        
 endif()
 
 # Build SMOOTH SIGNED DISTANCE SURFACE RECONSTRUCTION SOFTWARE from the ssd directory
 include_directories(${POINTCLOUD_SOURCE_DIR})
-include_directories(${POINTCLOUD_SOURCE_DIR}/ssd)
-add_subdirectory(${POINTCLOUD_SOURCE_DIR}/ssd)
+
+option(BUILD_SSD "Build Smooth Signed Distance Support" OFF)
+if (BUILD_SSD) 
+    add_definitions(-DBUILD_SSD)
+    include_directories(${POINTCLOUD_SOURCE_DIR}/ssd)
+    add_subdirectory(${POINTCLOUD_SOURCE_DIR}/ssd)
+    set(SSD_LIBRARIES dgp octree ssd)
+endif()
 
 include(${POINTCLOUD_SOURCE_DIR}/src/CMakeLists.txt)
 
@@ -134,7 +149,7 @@ qtx_add_resources(RESOURCES resources/pointcloud_resources.qrc)
 add_definitions(-DPOINTCLOUD_PLUGIN_VERSION=${POINTCLOUD_PLUGIN_VERSION})
 add_library(pointcloudplugin ${SOURCES} ${HEADERS} ${MOC_SOURCES} ${UIC_SOURCES} ${RESOURCES})
 message(STATUS ${LASZIP_LIBRARY})
-target_link_libraries(pointcloudplugin dataanalysisplugin meshplugin workspace dgp octree ssd ${LIBLAS_LIBRARY} ${PCL_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(pointcloudplugin dataanalysisplugin meshplugin workspace ${SSD_LIBRARIES} ${LIBLAS_LIBRARY} ${PCL_LIBRARIES} ${QT_LIBRARIES})
 
 set_target_properties(pointcloudplugin PROPERTIES
     DEFINE_SYMBOL CSIRO_POINTCLOUD_EXPORT
@@ -145,8 +160,8 @@ setTargetOutputDirectory(pointcloudplugin ${CSIRO_INSTALL_AREA}/lib/Plugins)
 configure_file(src/pkg-pointcloudplugin.cmake ${CSIRO_INSTALL_AREA}/cmake/Exports/pkg-pointcloudplugin.cmake @ONLY)
 
 message(STATUS "Linking plugin with PCL bin directory - $ENV{PCL_ROOT}")
-file(WRITE "${CSIRO_INSTALL_AREA}/installAreas/installArea-PointClouds.txt" "$ENV{PCL_ROOT}")
-file(APPEND "${CSIRO_INSTALL_AREA}/installAreas/installArea-PointClouds.txt" "\n${CSIRO_INSTALL_AREA}")
+file(WRITE "${CSIRO_INSTALL_AREA}/installAreas/installArea-pointcloudplugin.txt" "${PCL_TOOLS_DIRECTORY}")
+file(APPEND "${CSIRO_INSTALL_AREA}/installAreas/installArea-pointcloudplugin.txt" "\n${CSIRO_INSTALL_AREA}")
 
 if (LIBLAS_LIBRARY)
     add_custom_command(
@@ -155,7 +170,7 @@ if (LIBLAS_LIBRARY)
         COMMAND ${CMAKE_COMMAND} -E copy ${LIBLAS_DYNAMIC_LIB} ${CSIRO_INSTALL_AREA}/bin)
 endif()
 
-message(STATUS "\nCopy ${CSIRO_INSTALL_AREA}/installAreas/installArea-PointClouds.txt into ${WORKSPACE_CMAKE_ROOT}/../installAreas to auto-load your plugin on startup\n")
+message(STATUS "\nCopy ${CSIRO_INSTALL_AREA}/installAreas/installArea-pointcloudplugin.txt into ${WORKSPACE_CMAKE_ROOT}/../installAreas to auto-load your plugin on startup\n")
 
 # Copy our install headers into the install directory so that others can build against our plugin.
 foreach(inFile ${INSTALL_HEADERS})
