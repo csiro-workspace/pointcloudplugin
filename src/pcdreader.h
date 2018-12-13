@@ -28,7 +28,7 @@
 #ifndef CSIRO_POINTCLOUD_PCDREADER_H
 #define CSIRO_POINTCLOUD_PCDREADER_H
 
-#include "Workspace/DataExecution/Operations/operation.h"
+#include "Workspace/DataExecution/Operations/BuiltIn/polymorphicdataoperation.h"
 #include "Workspace/DataExecution/Operations/operationfactorytraits.h"
 
 #include "pointcloudplugin_api.h"
@@ -44,7 +44,7 @@ namespace PointCloud
     /**
      * \brief Read a PCD file
      */
-    class CSIRO_POINTCLOUD_API PcdReader : public DataExecution::Operation
+    class CSIRO_POINTCLOUD_API PcdReader : public DataExecution::PolymorphicDataOperation
     {
         Q_DECLARE_TR_FUNCTIONS(CSIRO::PointCloud::PcdReader)
 
@@ -59,6 +59,9 @@ namespace PointCloud
     public:
         PcdReader();
         virtual ~PcdReader();
+
+        virtual bool  canChangeDataFactory(const DataExecution::DataFactory& factory) const;
+        virtual bool  canChangeDataName(const QString& name) const;
     };
 
 }}   // end of namespaces

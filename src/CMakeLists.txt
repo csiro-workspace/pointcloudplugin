@@ -46,6 +46,8 @@ set(HEADERS
 set(INSTALL_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/pointcloudplugin_api.h
     ${CMAKE_CURRENT_LIST_DIR}/pointcloudplugin.h
+    ${CMAKE_CURRENT_LIST_DIR}/pclmeshmodelinterface.h
+    ${CMAKE_CURRENT_LIST_DIR}/pclmeshnodesinterface.h
 )
 
 set(MOC_HEADERS

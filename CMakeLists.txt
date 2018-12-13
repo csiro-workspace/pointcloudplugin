@@ -162,9 +162,8 @@ set_target_properties(pointcloudplugin PROPERTIES
 setTargetOutputDirectory(pointcloudplugin ${CSIRO_INSTALL_AREA}/lib/Plugins)
 configure_file(src/pkg-pointcloudplugin.cmake ${CSIRO_INSTALL_AREA}/cmake/Exports/pkg-pointcloudplugin.cmake @ONLY)
 
-message(STATUS "Linking plugin with PCL bin directory - $ENV{PCL_ROOT}")
-file(WRITE "${CSIRO_INSTALL_AREA}/installAreas/installArea-pointcloudplugin.txt" "${PCL_DIR}/..")
-file(APPEND "${CSIRO_INSTALL_AREA}/installAreas/installArea-pointcloudplugin.txt" "\n${CSIRO_INSTALL_AREA}")
+message(STATUS "Linking plugin with PCL root directory - ${PCL_DIR}/..")
+set_install_area_file(pointcloudplugin ${CSIRO_INSTALL_AREA} ${PCL_DIR}/..)
 
 if (LIBLAS_LIBRARY)
     add_custom_command(

@@ -135,11 +135,15 @@ namespace PointCloud
 #ifdef BUILD_SSD
         addFactory(CSIRO::DataExecution::OperationFactoryTraits<SmootheSignedDistance>::getInstance());
 #endif
-        
+
+        addFactory(CSIRO::DataExecution::DataFactoryTraits<pcl::PointXYZ>::getInstance());
+        addFactory(CSIRO::DataExecution::DataFactoryTraits<pcl::PointXYZRGBNormal>::getInstance());
+
         // Add your widget factories like this:
         //addFactory( MyNamespace::MyWidgetFactory::getInstance() );
 
         Mesh::MeshModelInterfaceRegistry::getInstance().registerType<PclMeshModelInterface>("PCL");
+        Mesh::MeshModelInterfaceRegistry::getInstance().registerType<PclMeshModelInterfaceXYZ>("PCLXYZ");
 
         return true;
     }

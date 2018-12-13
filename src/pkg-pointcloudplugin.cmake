@@ -1,6 +1,6 @@
 #============================================================================
 #
-#  Copyright 2015 by:
+#  Copyright 2018 by:
 #
 #    Commonwealth Scientific and Industrial Research Organisation (CSIRO)
 #    
@@ -25,12 +25,12 @@ IF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.5)
    MESSAGE(FATAL_ERROR "CMake >= 2.6.0 required")
 ENDIF()
 CMAKE_POLICY(PUSH)
-IF(NOT "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0)
-    CMAKE_POLICY(SET CMP0045 OLD)
-ENDIF()
+CMAKE_POLICY(VERSION 2.6)
 
-GET_TARGET_PROPERTY(pointcloudplugin_location pointcloudplugin LOCATION)
-if (NOT POINTCLOUD_SOURCE_DIR AND NOT pointcloudplugin_location AND NOT TARGET pointcloudplugin)
+if (TARGET pointcloudplugin)
+    GET_TARGET_PROPERTY(pointcloudplugin_location pointcloudplugin LOCATION)
+endif()
+if (NOT @CMAKE_PROJECT_NAME@_SOURCE_DIR AND NOT pointcloudplugin_location AND NOT TARGET pointcloudplugin)
     # Commands may need to know the format version.
     SET(CMAKE_IMPORT_FILE_VERSION 1)
 
@@ -42,22 +42,24 @@ if (NOT POINTCLOUD_SOURCE_DIR AND NOT pointcloudplugin_location AND NOT TARGET p
     # Create imported target pointcloudplugin
     ADD_LIBRARY(pointcloudplugin SHARED IMPORTED)
     if (WIN32)
-        find_file(IMPORTLIB pointcloudplugin.lib PATHS "${_IMPORT_PREFIX}/lib/Plugins"
-                  PATH_SUFFIXES  Release RelWithDebInfo MinSizeRel Debug NO_DEFAULT_PATHS)
+        unset(WORKSPACE_pointcloudplugin_IMPORTLIB CACHE)
+        find_file(WORKSPACE_pointcloudplugin_IMPORTLIB pointcloudplugin.lib PATHS "${_IMPORT_PREFIX}/lib/Plugins"
+                  PATH_SUFFIXES  Release RelWithDebInfo MinSizeRel Debug NO_DEFAULT_PATH)
         SET_TARGET_PROPERTIES(pointcloudplugin PROPERTIES
                               IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/Plugins/pointcloudplugin.dll"
-                              IMPORTED_IMPLIB   "${IMPORTLIB}")
-        unset(IMPORTLIB CACHE)
+                              IMPORTED_IMPLIB   "${WORKSPACE_pointcloudplugin_IMPORTLIB}")
     elseif(APPLE)
         SET_TARGET_PROPERTIES(pointcloudplugin PROPERTIES
-                              IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/Plugins/libpointcloudplugin.@POINTCLOUD_PLUGIN_SOVERSION@.dylib"
-                              IMPORTED_SONAME "libpointcloudplugin.@POINTCLOUD_PLUGIN_SOVERSION@.dylib")
+                              IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/Plugins/libpointcloudplugin.@POINTCLOUDPLUGIN_SOVERSION@.dylib"
+                              IMPORTED_SONAME "libpointcloudplugin.@POINTCLOUDPLUGIN_SOVERSION@.dylib")
     else()
         SET_TARGET_PROPERTIES(pointcloudplugin PROPERTIES
-                              IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/Plugins/libpointcloudplugin.so.@POINTCLOUD_PLUGIN_SOVERSION@"
-                              IMPORTED_SONAME "libpointcloudplugin.so.@POINTCLOUD_PLUGIN_SOVERSION@")
+                              IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/Plugins/libpointcloudplugin.so.@POINTCLOUDPLUGIN_SOVERSION@"
+                              IMPORTED_SONAME "libpointcloudplugin.so.@POINTCLOUDPLUGIN_SOVERSION@")
     endif()
-    SET_TARGET_PROPERTIES(pointcloudplugin PROPERTIES IMPORTED_LINK_INTERFACE_LIBRARIES "workspace")
+    SET_TARGET_PROPERTIES(pointcloudplugin PROPERTIES
+        IMPORTED_LINK_INTERFACE_LIBRARIES "workspace"
+        INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/@POINTCLOUDPLUGIN_INTERFACE_INCLUDE_DIRECTORIES@")
 
     # Commands beyond this point should not need to know the version.
     SET(CMAKE_IMPORT_FILE_VERSION)

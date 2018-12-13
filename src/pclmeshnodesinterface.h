@@ -33,6 +33,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
+#include "Mesh/Geometry/vector3d.h"
 #include "Mesh/DataStructures/MeshModelInterface/meshnodesinterface.h"
 
 namespace CSIRO
@@ -40,13 +41,14 @@ namespace CSIRO
  
 namespace PointCloud
 {
+
     /**
      * \brief A Workspace MeshNodesInterface wrapper around a PCL cloud
      */
+    template<typename P>
     class PclMeshNodesInterface : public Mesh::MeshNodesInterface
     {
     public:
-
         PclMeshNodesInterface();
         PclMeshNodesInterface(const PclMeshNodesInterface&);
         const PclMeshNodesInterface& operator= (const PclMeshNodesInterface&);
@@ -78,9 +80,11 @@ namespace PointCloud
                                          const Mesh::NodeStateHandle& state, 
                                          const DataExecution::DataObject& value);
 
-        typedef pcl::PointXYZRGBNormal      point_t;
-        typedef pcl::PointCloud<point_t>    pointcloud_t;
-        pointcloud_t::Ptr getPointCloud() { return pointCloud_; }
+        virtual PclMeshNodesInterface* clone() const;
+
+        typedef P                   point_t;
+        typedef pcl::PointCloud<P>  pointcloud_t;
+        typename pointcloud_t::Ptr getPointCloud() { return pointCloud_; }
 
     protected:
 
@@ -115,10 +119,473 @@ namespace PointCloud
 
         void initStates();
 
-        pointcloud_t::Ptr            pointCloud_;
+        typename pointcloud_t::Ptr   pointCloud_;
         const Mesh::NodeStateHandle* rgbaState_;
         const Mesh::NodeStateHandle* normalState_;
     };
+
+
+    /**
+     *
+     */
+    template<typename P>
+    void PclMeshNodesInterface<P>::initStates()
+    {
+        registerExistingState(0, "RGBA", DataExecution::TypedObject<Mesh::MeshModelInterface::int_type>(0xFFFFFFFF));
+        registerExistingState(1, "normal", DataExecution::TypedObject<Mesh::Vector3d>(Mesh::Vector3d(0,0,0)));
+
+        rgbaState_ = &getStateHandle("RGBA");
+        normalState_ = &getStateHandle("normal");
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    PclMeshNodesInterface<P>::PclMeshNodesInterface() :
+        pointCloud_(new pointcloud_t()),
+        rgbaState_(0),
+        normalState_(0)
+    {
+        initStates();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    PclMeshNodesInterface<P>::PclMeshNodesInterface( const PclMeshNodesInterface& other ) :
+        MeshNodesInterface(other),
+        pointCloud_(new pointcloud_t(*other.pointCloud_)),
+        rgbaState_(0),
+        normalState_(0)
+    {
+        initStates();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    const PclMeshNodesInterface<P>& PclMeshNodesInterface<P>::operator=( const PclMeshNodesInterface<P>& other )
+    {
+        MeshNodesInterface::operator=(other);
+        pointCloud_ = typename pointcloud_t::Ptr(new pointcloud_t(*other.pointCloud_));
+        return *this;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::NodeHandle PclMeshNodesInterface<P>::add( const Mesh::Vector3d& position )
+    {
+        size_type newIndex = pointCloud_->size();
+        point_t point;
+        point.x = position.x;
+        point.y = position.y;
+        point.z = position.z;
+        pointCloud_->push_back(point);
+        return Mesh::NodeHandle(newIndex);
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::Vector3d PclMeshNodesInterface<P>::getPosition( const Mesh::NodeHandle& nodeHandle ) const
+    {
+        assert(nodeHandle.getIndex() < static_cast<size_type>(pointCloud_->size()));
+        const point_t& point = getPoint(nodeHandle);
+        Mesh::Vector3d result(point.x, point.y, point.z);
+        return result;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    void PclMeshNodesInterface<P>::setPosition( const Mesh::NodeHandle& nodeHandle, const Mesh::Vector3d& position )
+    {
+        assert(nodeHandle.getIndex() < static_cast<size_type>(pointCloud_->size()));
+        point_t& point = getPoint(nodeHandle);
+        point.x = position.x;
+        point.y = position.y;
+        point.z = position.z;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    bool PclMeshNodesInterface<P>::isStateTypeSupported( const DataExecution::DataFactory& dataFactory ) const
+    {
+        return true;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::MeshNodesInterface::size_type PclMeshNodesInterface<P>::size() const
+    {
+        return pointCloud_->size();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    void PclMeshNodesInterface<P>::clear()
+    {
+        pointCloud_->clear();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    typename PclMeshNodesInterface<P>::iterator PclMeshNodesInterface<P>::erase( const iterator& position )
+    {
+        pointCloud_->erase(pointCloud_->begin() + position->getIndex());
+        return createIterator(Mesh::NodeHandle(position->getIndex() + 1));
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    void PclMeshNodesInterface<P>::remove( const Mesh::NodeHandle& nodeHandle )
+    {
+        pointCloud_->erase(pointCloud_->begin() + nodeHandle.getIndex());
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    bool PclMeshNodesInterface<P>::empty() const
+    {
+        return pointCloud_->empty();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    void PclMeshNodesInterface<P>::reserve( size_type n )
+    {
+        pointCloud_->reserve(n);
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::setState(
+        const Mesh::NodeHandle& nodeHandle,
+        const Mesh::NodeStateHandle& state,
+        const DataExecution::DataObject& value )
+    {
+        if (&value.getFactory() == &DataExecution::DataFactoryTraits<Mesh::MeshModelInterface::int_type>::getInstance())
+        {
+            setState(nodeHandle, state, value.getRawData<Mesh::MeshModelInterface::int_type>());
+        }
+        else if (&value.getFactory() == &DataExecution::DataFactoryTraits<Mesh::Vector3d>::getInstance())
+        {
+            setState(nodeHandle, state, value.getRawData<Mesh::Vector3d>());
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     *
+     */
+    template<>
+    inline bool PclMeshNodesInterface<pcl::PointXYZRGBNormal>::setState(
+        const Mesh::NodeHandle& nodeHandle,
+        const Mesh::NodeStateHandle& state,
+        const DataExecution::DataObject& value )
+    {
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::setState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, int_type value )
+    {
+        point_t point = getPoint(nodeHandle);
+        Q_UNUSED(point)
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<>
+    inline bool PclMeshNodesInterface<pcl::PointXYZRGBNormal>::setState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, int_type value )
+    {
+        point_t point = getPoint(nodeHandle);
+        if (&state == rgbaState_)
+        {
+            uint rgba = static_cast<uint>(value);
+            point.r = (rgba) & 0xFF;
+            point.g = (rgba >> 8) & 0xFF;
+            point.b = (rgba >> 16) & 0xFF;
+            point.a = (rgba >> 24) & 0xFF;
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::setState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, double value )
+    {
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::setState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, const Mesh::Vector3d& value )
+    {
+        point_t& point = getPoint(nodeHandle);
+        Q_UNUSED(point)
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<>
+    inline bool PclMeshNodesInterface<pcl::PointXYZRGBNormal>::setState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, const Mesh::Vector3d& value )
+    {
+        point_t& point = getPoint(nodeHandle);
+        if (&state == normalState_)
+        {
+            point.normal_x = value.x;
+            point.normal_y = value.y;
+            point.normal_z = value.z;
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::NodeHandle PclMeshNodesInterface<P>::advance( const Mesh::NodeHandle& nodeHandle, size_type n ) const
+    {
+        return Mesh::NodeHandle(nodeHandle.getIndex() + n);
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::NodeStateHandle* PclMeshNodesInterface<P>::addStateToImplementation( const QString& name, const DataExecution::DataObject& defaultValue )
+    {
+        return 0; // not supported
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    bool PclMeshNodesInterface<P>::removeStateFromImplementation( const Mesh::NodeStateHandle& state )
+    {
+        return false; // not supported
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::getStateImpl( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, DataExecution::DataObject& result )
+    {
+        // Use const version - base class that calls this will ensure data isn't shared which is the only difference b/w const and non-const version
+        return static_cast<const PclMeshNodesInterface*>(this)->getStateImpl(nodeHandle, state, result);
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::getStateImpl( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, DataExecution::DataObject& result ) const
+    {
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::NodeHandle PclMeshNodesInterface<P>::beginHandle() const
+    {
+        return Mesh::NodeHandle(0);
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    CSIRO::Mesh::NodeHandle PclMeshNodesInterface<P>::endHandle() const
+    {
+        return Mesh::NodeHandle(pointCloud_->size());
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::getState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, int_type& result ) const
+    {
+        const point_t& point = getPoint(nodeHandle);
+        Q_UNUSED(point)
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<>
+    inline bool PclMeshNodesInterface<pcl::PointXYZRGBNormal>::getState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, int_type& result ) const
+    {
+        const point_t& point = getPoint(nodeHandle);
+
+        if (&state == rgbaState_)
+        {
+            uint rgba = 0;
+            rgba |= point.r;
+            rgba |= point.g << 8;
+            rgba |= point.b << 16;
+            rgba |= 255 << 24;
+            result = static_cast<Mesh::MeshModelInterface::int_type>(rgba);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::getState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, double& result ) const
+    {
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    inline bool PclMeshNodesInterface<P>::getState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, Mesh::Vector3d& result ) const
+    {
+        const point_t& point = getPoint(nodeHandle);
+        Q_UNUSED(point)
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<>
+    inline bool PclMeshNodesInterface<pcl::PointXYZRGBNormal>::getState( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, Mesh::Vector3d& result ) const
+    {
+        const point_t& point = getPoint(nodeHandle);
+
+        if (&state == normalState_)
+        {
+            result.x = point.normal_x;
+            result.y = point.normal_y;
+            result.z = point.normal_z;
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    PclMeshNodesInterface<P>* PclMeshNodesInterface<P>::clone() const
+    {
+        return new PclMeshNodesInterface<P>(*this);
+    }
+
+
+    /**
+     *
+     */
+    template<>
+    inline bool PclMeshNodesInterface<pcl::PointXYZRGBNormal>::getStateImpl( const Mesh::NodeHandle& nodeHandle, const Mesh::NodeStateHandle& state, DataExecution::DataObject& result ) const
+    {
+        if (&result.getFactory() == &DataExecution::DataFactoryTraits<Mesh::MeshModelInterface::int_type>::getInstance())
+        {
+            getState(nodeHandle, state, result.getRawData<Mesh::MeshModelInterface::int_type>());
+        }
+        else if (&result.getFactory() == &DataExecution::DataFactoryTraits<Mesh::Vector3d>::getInstance())
+        {
+            getState(nodeHandle, state, result.getRawData<Mesh::Vector3d>());
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
 }}
 
 #endif

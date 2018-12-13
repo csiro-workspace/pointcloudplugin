@@ -22,12 +22,16 @@
 ============================================================================*/
 
 #include <cassert>
+#include <iostream>
 
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
+#include <pcl/PCLPointCloud2.h>
 
 #include <QFileInfo>
 
+#include "Workspace/Application/LanguageUtils/errorchecks.h"
+#include "Workspace/Application/LanguageUtils/streamqstring.h"
 #include "Workspace/Application/System/systemutilities.h"
 #include "Workspace/DataExecution/DataObjects/typedobject.h"
 #include "Workspace/DataExecution/InputOutput/output.h"
@@ -66,6 +70,50 @@ namespace PointCloud
         Output                          outputMesh_;
 
         PcdReaderImpl(PcdReader& op);
+
+        bool loadPcdFile(const DataFactory& pointType, const QString& fileName)
+        {
+            /*
+            pcl::PCLPointCloud2 cloud_blob;
+            std::string str( fileName.toStdString() );
+            if (pcl::io::loadPCDFile(str, cloud_blob) != 0)
+            {
+                Application::LogManager::logText(tr("ERROR: loadPCDFile() failed for %1").arg(fileName) + "\n");
+                return false;
+            }
+            */
+
+            if (&pointType == &DataFactoryTraits<pcl::PointXYZRGBNormal>::getInstance())
+            {
+                auto meshInterface = new PclMeshModelInterface();
+                mesh_.setData(meshInterface, true);
+                //pcl::fromPCLPointCloud2(cloud_blob, *meshInterface->getPointCloud());
+                if (pcl::io::loadPCDFile<pcl::PointXYZRGBNormal>(fileName.toStdString(), *meshInterface->getPointCloud()) == -1)
+                {
+                    Application::LogManager::logText(tr("ERROR: loadPCDFile() failed for %1").arg(fileName) + "\n");
+                    return false;
+                }
+            }
+            else if (&pointType == &DataFactoryTraits<pcl::PointXYZ>::getInstance())
+            {
+                auto meshInterface = new PclMeshModelInterfaceXYZ();
+                mesh_.setData(meshInterface, true);
+                //pcl::fromPCLPointCloud2(cloud_blob, *meshInterface->getPointCloud());
+                if (pcl::io::loadPCDFile<pcl::PointXYZ>(fileName.toStdString(), *meshInterface->getPointCloud()) == -1)
+                {
+                    Application::LogManager::logText(tr("ERROR: loadPCDFile() failed for %1").arg(fileName) + "\n");
+                    return false;
+                }
+            }
+            else
+            {
+                WS_ASSERT_LOGIC(false);
+                Application::LogManager::logText(tr("ERROR: Unsupported point type %1").arg(pointType.getTypeName()) + "\n");
+                return false;
+            }
+
+            return true;
+        }
     };
 
 
@@ -85,7 +133,10 @@ namespace PointCloud
      *
      */
     PcdReader::PcdReader() :
-        Operation(OperationFactoryTraits<PcdReader>::getInstance(), tr("Read PCD point cloud file")),
+        DataExecution::PolymorphicDataOperation(
+            DataExecution::OperationFactoryTraits<PcdReader>::getInstance(),
+            tr("Read PCD point cloud file"),
+            DataExecution::DataFactoryTraits<pcl::PointXYZRGBNormal>::getInstance()),
         pImpl_(static_cast<PcdReaderImpl*>(0))
     {
         pImpl_ = new PcdReaderImpl(*this);
@@ -107,13 +158,34 @@ namespace PointCloud
     bool  PcdReader::execute()
     {
         QString fileName = CSIRO::System::Utilities::downloadIfRemote(*pImpl_->fileName_, getLabel());
+        return pImpl_->loadPcdFile(getDataObject().getFactory(), fileName);
+    }
 
-        PclMeshModelInterface* meshInterface = new PclMeshModelInterface();
-        pImpl_->mesh_.setData(meshInterface, true);
-        
-        if (pcl::io::loadPCDFile<PclMeshNodesInterface::point_t>(fileName.toStdString(), *meshInterface->getPointCloud()) != 0)
+
+    /**
+     *
+     */
+    bool  PcdReader::canChangeDataFactory(const DataExecution::DataFactory& factory) const
+    {
+        if (&factory == &DataExecution::DataFactoryTraits<pcl::PointXYZRGBNormal>::getInstance())
         {
-            logText(tr("ERROR: loadPCDFile() failed for %1 %2\n").arg(fileName).arg(*pImpl_->fileName_));
+            return true;
+        }
+        else if (&factory == &DataExecution::DataFactoryTraits<pcl::PointXYZ>::getInstance())
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    bool  PcdReader::canChangeDataName(const QString& name) const
+    {
+        if (name == "Dependencies")
+        {
             return false;
         }
 

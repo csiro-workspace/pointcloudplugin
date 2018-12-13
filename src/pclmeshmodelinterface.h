@@ -30,6 +30,7 @@
 
 #include "PointCloud/pointcloudplugin_api.h"
 #include "Mesh/DataStructures/MeshModelInterface/meshmodelinterface.h"
+#include "Mesh/DataStructures/MeshModelInterface/meshelementsinterface.h"
 
 #include "pclmeshnodesinterface.h"
 
@@ -41,20 +42,25 @@ namespace PointCloud
     /**
      * \brief  A Workspace MeshModelInterface wrapper around a PCL cloud
      */
-    class CSIRO_POINTCLOUD_API PclMeshModelInterface : public Mesh::TypedMeshModelInterface<PclMeshModelInterface>
+    template<typename P>
+    class TypedPclMeshModelInterface : public Mesh::TypedMeshModelInterface<TypedPclMeshModelInterface<P> >
     {
-        PclMeshNodesInterface nodes_;
+        PclMeshNodesInterface<P> nodes_;
 
     public:
+        typedef P                   point_t;
+        typedef pcl::PointCloud<P>  pointcloud_t;
 
-        PclMeshModelInterface();
-        PclMeshModelInterface(const PclMeshModelInterface& other);
+        TypedPclMeshModelInterface();
+        TypedPclMeshModelInterface(const TypedPclMeshModelInterface& other);
 
-        const PclMeshModelInterface& operator=(const PclMeshModelInterface& other);
+        const TypedPclMeshModelInterface& operator=(const TypedPclMeshModelInterface& other);
 
-        virtual ~PclMeshModelInterface();
+        const DataExecution::DataFactory& getPointType() const;
 
-        virtual PclMeshModelInterface*          clone() const;
+        virtual ~TypedPclMeshModelInterface();
+
+        virtual TypedPclMeshModelInterface*          clone() const;
 
         virtual Mesh::MeshNodesInterface&             getNodes();
         virtual const Mesh::MeshNodesInterface&       getNodes() const;
@@ -74,17 +80,258 @@ namespace PointCloud
         virtual Mesh::ElementType::List         attachmentInfoExistsFor() const;
         virtual Mesh::ElementHandleList         getAttachedElements(const Mesh::ElementType::Type& elementType, const Mesh::NodeHandle& node) const;
 
-        PclMeshNodesInterface::pointcloud_t::Ptr getPointCloud();
+        typename PclMeshNodesInterface<P>::pointcloud_t::Ptr getPointCloud();
 
     protected:
-
-        virtual bool                            fastAssignFrom(const MeshModelInterface& other);
+        virtual bool                            fastAssignFrom(const Mesh::MeshModelInterface& other);
     };
 
-    PclMeshNodesInterface::pointcloud_t::Ptr getOrCreatePointCloud(Mesh::MeshModelInterface& mesh);
+
+    typedef TypedPclMeshModelInterface<pcl::PointXYZRGBNormal> PclMeshModelInterface;
+    typedef TypedPclMeshModelInterface<pcl::PointXYZRGBNormal> PclMeshModelInterfaceXYZRGBNormal;
+    typedef TypedPclMeshModelInterface<pcl::PointXYZ>          PclMeshModelInterfaceXYZ;
+
+
+
+    /**
+     *
+     */
+    template<typename P>
+    TypedPclMeshModelInterface<P>::TypedPclMeshModelInterface()
+    {
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    TypedPclMeshModelInterface<P>::TypedPclMeshModelInterface(const TypedPclMeshModelInterface<P>& other) :
+        nodes_(other.nodes_)
+    {
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    const TypedPclMeshModelInterface<P>& TypedPclMeshModelInterface<P>::operator=( const TypedPclMeshModelInterface<P>& other )
+    {
+        if (&other != this)
+        {
+            nodes_ = other.nodes_;
+        }
+
+        return *this;
+    }
+
+
+    /**
+     * \return The data type associated with the point struct used to store point data in this
+     *         MeshModelInterface implementation.
+     */
+    template<typename P>
+    const DataExecution::DataFactory& TypedPclMeshModelInterface<P>::getPointType() const
+    {
+        return DataExecution::DataFactoryTraits<P>::getInstance();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    bool TypedPclMeshModelInterface<P>::fastAssignFrom( const Mesh::MeshModelInterface& other )
+    {
+        if (&other.getFactory() == &this->getFactory())
+        {
+            *this = static_cast<const TypedPclMeshModelInterface<P>&>(other);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    TypedPclMeshModelInterface<P>::~TypedPclMeshModelInterface()
+    {
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    TypedPclMeshModelInterface<P>* TypedPclMeshModelInterface<P>::clone() const
+    {
+        return new TypedPclMeshModelInterface(*this);
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::MeshNodesInterface& TypedPclMeshModelInterface<P>::getNodes()
+    {
+        return nodes_;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    const Mesh::MeshNodesInterface& TypedPclMeshModelInterface<P>::getNodes() const
+    {
+        return nodes_;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::MeshElementsInterface& TypedPclMeshModelInterface<P>::getElements(const Mesh::ElementType::Type& type)
+    {
+        return Mesh::MeshElementsInterface::getNullMeshElementsInterface();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    const Mesh::MeshElementsInterface& TypedPclMeshModelInterface<P>::getElements(const Mesh::ElementType::Type& type) const
+    {
+        return Mesh::MeshElementsInterface::getNullMeshElementsInterface();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    void TypedPclMeshModelInterface<P>::emptyTrash()
+    {
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    bool TypedPclMeshModelInterface<P>::isElementTypeSupported( const Mesh::ElementType::Type& type ) const
+    {
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::ElementType::List TypedPclMeshModelInterface<P>::getElementTypesPresentInModel() const
+    {
+        return Mesh::ElementType::List();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::ElementType::List TypedPclMeshModelInterface<P>::getElementTypesWithStatesDefined() const
+    {
+        return Mesh::ElementType::List();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    bool TypedPclMeshModelInterface<P>::generateAttachmentInfo( const Mesh::ElementType::Type& elementType )
+    {
+        return true;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    void TypedPclMeshModelInterface<P>::discardAttachmentInfo( const Mesh::ElementType::Type& elementType )
+    {
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    bool TypedPclMeshModelInterface<P>::attachmentInfoExistsFor( const Mesh::ElementType::Type& elementType ) const
+    {
+        return false;
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::ElementType::List TypedPclMeshModelInterface<P>::attachmentInfoExistsFor() const
+    {
+        return Mesh::ElementType::List();
+    }
+
+
+    /**
+     *
+     */
+    template<typename P>
+    Mesh::ElementHandleList TypedPclMeshModelInterface<P>::getAttachedElements(
+        const Mesh::ElementType::Type& elementType,
+        const Mesh::NodeHandle& nodeHandle ) const
+    {
+        assert(false);
+        return Mesh::ElementHandleList();
+    }
+
+
+    /**
+     * \return
+     */
+    template<typename P>
+    typename PclMeshNodesInterface<P>::pointcloud_t::Ptr TypedPclMeshModelInterface<P>::getPointCloud()
+    {
+        return nodes_.getPointCloud();
+    }
+
+
+    /**
+     * \return The underlying point cloud if \a mesh is of type PclMeshNodesInterface, otherwise creates one
+     */
+    template<typename P>
+    typename PclMeshNodesInterface<P>::pointcloud_t::Ptr createPointCloud( Mesh::MeshModelInterface& mesh )
+    {
+        if (&mesh.getFactory() == &DataExecution::DataFactoryTraits<TypedPclMeshModelInterface<P> >::getInstance())
+        {
+            return static_cast<TypedPclMeshModelInterface<P>&>(mesh).template getPointCloud<P>();
+        }
+    }
+
 
 }}   // end of namespaces
 
 DECLARE_WORKSPACE_DATA_FACTORY(CSIRO::PointCloud::PclMeshModelInterface, CSIRO_POINTCLOUD_API)
+DECLARE_WORKSPACE_DATA_FACTORY(CSIRO::PointCloud::PclMeshModelInterfaceXYZ, CSIRO_POINTCLOUD_API)
+DECLARE_WORKSPACE_DATA_FACTORY(pcl::PointXYZ, CSIRO_POINTCLOUD_API)
+DECLARE_WORKSPACE_DATA_FACTORY(pcl::PointXYZRGBNormal, CSIRO_POINTCLOUD_API)
 
 #endif

@@ -21,7 +21,7 @@ Compiling and using the plugin
 5. Launch CMake from Workspace's Development menu to configure and generate the project. This needs to be done from within Workspace rather than running CMake directly as some key environment variables get setup.
    * If Boost detection fails as part of finding PCL during the CMake Configure, explicitly add a CMake variable for Boost_INCLUDE_DIR pointing to the version of boost being used by PCL (eg. C:/Program Files/PCL 1.6.0/3rdParty/Boost/include for the Windows All-in-one installer). This prevents the Boost version that ships with Workspace for Python support causing issues. 
 6. Compile the project
-7. Copy Install\installAreas\installArea-PointClouds.txt from your build directory to Workspace's installAreas directory (Create this directory under the top level Workspace install directory if it doesn't yet exist).
+7. Copy Install\installAreas\installArea-pointcloudplugin.txt from your build directory to Workspace's installAreas directory (Create this directory under the top level Workspace install directory if it doesn't yet exist).
 8. Restart Workspace and a PointCloud group should be available in the Workspace operation catalogue
 
 About CSIRO Workspace
